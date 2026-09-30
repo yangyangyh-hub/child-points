@@ -662,6 +662,7 @@ cloudfunctions/<函数名>/            ← 自动生成的部署副本,【永远
 | **搜索权重天然吃亏** | 官方社区:"搜索限制案例 **90% 由未完成认证/备案导致**"。本项目备案已过,但**个人主体无法认证** ⇒ 搜索曝光天然弱,**别把搜索当主入口**。 |
 | **家人进去是空的** | 数据按 `_openid` 隔离(§5.4)⇒ 家人首次进入走「开始设置」,要**自己建一个孩子**。**这是既定行为不是 bug**,分享前先跟家人说清楚。 |
 | 隐私指引 | 已在提审时配置并勾选(相册 + 头像昵称)⇒ 线上走官方弹窗。`__usePrivacyCheck__` 待删,见 §10.3。 |
+| **代码仓库(2026-09-30)** | **https://github.com/yangyangyh-hub/child-points** —— **PUBLIC**。首次提交 `3e0c015`,185 文件 / 28,343 行。新增 `.gitignore`(排除 `.cache/`、`node_modules/`、`project.private.config.json`)+ `.gitattributes`(统一 LF)。<br>⚠️ **仓库是公开的**:含 AppID 与云环境 ID —— 二者是小程序前端代码里本来就有的公开标识,**不是密钥**;全项目扫描确认**无 AppSecret / 令牌 / 私钥**。<br>要转私有:`PATCH /repos/yangyangyh-hub/child-points {"private": true}`(本机令牌有 `repo` scope,可做)。 |
 
 ---
 
