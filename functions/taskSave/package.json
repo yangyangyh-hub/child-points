@@ -1,0 +1,9 @@
+{
+  "name": "taskSave",
+  "version": "1.0.0",
+  "description": "行为规则的新增/修改/启停/软删除;预设项不可删",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

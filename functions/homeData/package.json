@@ -1,0 +1,9 @@
+{
+  "name": "homeData",
+  "version": "1.0.0",
+  "description": "首页数据聚合(双积分/今日得分/连续打卡/勋章/日志),含双模式隔离",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

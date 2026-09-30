@@ -1,0 +1,471 @@
+<!-- 勋章页 · 三个板块(2026-09-24 重构)
+
+     ★ 顶部标签切换三块内容,每块独立布局、数据分开:
+        1) 已获得勋章   小程序自动判定(数据来自 homeData)
+        2) 成绩记录     学校考试/测验,家长录入
+        3) 获得的荣誉   学校或机构颁发,家长录入,可带照片
+
+     ★ 切换是**页面内**的 setData,不是 wx.switchTab
+       switchTab 是切底部导航用的,这里用它会跳走、还会丢状态。
+       小程序没有原生的页面内标签组件,所以这个标签条是自己画的。
+
+     ★ 每块都必须有自己的空状态 —— 不能显示空容器(项目铁律) -->
+
+<view class="page">
+
+  <!-- ============ 顶部标签 ============ -->
+  <view class="seg-bar">
+    <view
+      class="seg {{tab === 'medal' ? 'seg-on' : ''}}"
+      data-tab="medal" bindtap="onSwitchTab"
+    >已获得勋章</view>
+    <view
+      class="seg {{tab === 'score' ? 'seg-on' : ''}}"
+      data-tab="score" bindtap="onSwitchTab"
+    >成绩记录</view>
+    <view
+      class="seg {{tab === 'honor' ? 'seg-on' : ''}}"
+      data-tab="honor" bindtap="onSwitchTab"
+    >获得的荣誉</view>
+  </view>
+
+  <!-- ==================== 块1:已获得勋章 ==================== -->
+  <block wx:if="{{tab === 'medal'}}">
+
+    <!-- 骨架 -->
+    <block wx:if="{{loading}}">
+      <view class="card hero-card">
+        <view class="skeleton" style="width:100%;height:200rpx;"></view>
+      </view>
+      <view class="card">
+        <view class="skeleton" style="width:100%;height:140rpx;"></view>
+      </view>
+    </block>
+
+    <!-- 失败 -->
+    <block wx:elif="{{error}}">
+      <view class="card">
+        <view class="empty">
+          <view class="empty-icon">☁️</view>
+          <view>{{error}}</view>
+          <view class="empty-tip">下拉页面也能重试</view>
+        </view>
+        <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <!-- 进度总览 -->
+      <view class="card hero-card">
+        <view class="hero-row">
+          <view class="hero-main">
+            <view class="hero-label">已获得勋章</view>
+            <view class="hero-value">
+              <text class="num">{{unlockedCount}}</text>
+              <text class="hero-total num"> / {{medalTotal}}</text>
+            </view>
+          </view>
+          <view class="hero-badge">
+            <text class="hero-badge-num num">{{percent}}%</text>
+          </view>
+        </view>
+
+        <view class="progress-track">
+          <view class="progress-fill" style="width:{{percent}}%"></view>
+        </view>
+
+        <view class="hero-streak">
+          <text>连续打卡 </text>
+          <text class="num strong">{{streak.current}}</text>
+          <text> 天</text>
+          <text wx:if="{{streak.longest > streak.current}}" class="muted small">
+            (最长 {{streak.longest}} 天)
+          </text>
+        </view>
+        <view class="hero-note">
+          允许断签 {{streak.allowBreak}} 次,断了也接着算
+        </view>
+      </view>
+
+      <!-- 已获得 -->
+      <view class="section-title" wx:if="{{unlockedList.length > 0}}">
+        <text>已获得</text>
+        <text class="more">{{unlockedList.length}} 枚</text>
+      </view>
+
+      <view class="card medal-grid-card" wx:if="{{unlockedList.length > 0}}">
+        <view class="medal-grid">
+          <view
+            class="medal-cell medal-cell-on"
+            wx:for="{{unlockedList}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onTapMedal"
+          >
+            <view class="medal-icon">{{item.icon}}</view>
+            <view class="medal-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card" wx:else>
+        <view class="empty">
+          <view class="empty-icon">🏅</view>
+          <view>还没有获得勋章</view>
+          <view class="empty-tip">坚持打卡,第一枚很快就能拿到</view>
+        </view>
+        <button class="btn-big btn-soft-bg" bindtap="onGoCheckin">去打卡</button>
+      </view>
+
+      <!-- 进行中 -->
+      <view class="section-title" wx:if="{{lockedList.length > 0}}">
+        <text>进行中</text>
+        <text class="more">点开看还差多少</text>
+      </view>
+
+      <view class="card" wx:if="{{lockedList.length > 0}}">
+        <view
+          class="lock-item"
+          wx:for="{{lockedList}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onTapMedal"
+        >
+          <view class="lock-icon">{{item.icon}}</view>
+          <view class="lock-body">
+            <view class="lock-head">
+              <text class="lock-name">{{item.name}}</text>
+              <text class="lock-progress">{{item.progressText}}</text>
+            </view>
+            <view class="lock-bar">
+              <view class="lock-bar-fill" style="width:{{item.percent}}%"></view>
+            </view>
+            <view class="lock-desc">{{item.desc}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="btn-row">
+        <button class="btn-big btn-soft-bg" bindtap="onGoStats">看看我的统计</button>
+      </view>
+
+      <view class="pb-safe"></view>
+    </block>
+  </block>
+
+  <!-- ==================== 块2:成绩记录 ==================== -->
+  <block wx:elif="{{tab === 'score'}}">
+
+    <block wx:if="{{scoreLoading}}">
+      <view class="card">
+        <view class="skeleton" style="width:100%;height:120rpx;"></view>
+      </view>
+      <view class="card">
+        <view class="skeleton" style="width:100%;height:120rpx;"></view>
+      </view>
+    </block>
+
+    <block wx:elif="{{scoreError}}">
+      <view class="card">
+        <view class="empty">
+          <view class="empty-icon">☁️</view>
+          <view>{{scoreError}}</view>
+        </view>
+        <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="section-title" wx:if="{{scoreList.length > 0}}">
+        <text>考试与测验</text>
+        <text class="more">{{scoreList.length}} 条</text>
+      </view>
+
+      <view class="card" wx:if="{{scoreList.length > 0}}">
+        <view class="ach-item" wx:for="{{scoreList}}" wx:key="_id">
+          <view class="ach-left">
+            <view class="ach-title">
+              {{item.subject}}
+              <text class="ach-score num" wx:if="{{item.type === 'score'}}">
+                {{item.score}} / {{item.full}}
+              </text>
+              <text class="ach-level" wx:else>{{item.level}}</text>
+            </view>
+            <view class="ach-sub">
+              <text class="num">{{item.date}}</text>
+              <text wx:if="{{item.note}}"> · {{item.note}}</text>
+            </view>
+          </view>
+
+          <!-- 只有家长模式才出现编辑/删除 -->
+          <view class="ach-ops" wx:if="{{isParent}}">
+            <view class="ach-op" data-kind="score" data-id="{{item._id}}" bindtap="onEditItem">改</view>
+            <view class="ach-op ach-op-del" data-kind="score" data-id="{{item._id}}" bindtap="onRemoveItem">删</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="card" wx:else>
+        <view class="empty">
+          <view class="empty-icon">📝</view>
+          <view>还没有成绩记录</view>
+          <view class="empty-tip">
+            {{isParent ? '考试、测验的成绩都可以记在这里' : '家长记下来之后,你就能在这里看到啦'}}
+          </view>
+        </view>
+        <button class="btn-big btn-soft-bg" wx:if="{{isParent}}" bindtap="onAddScore">记一条成绩</button>
+      </view>
+
+      <view class="btn-row" wx:if="{{isParent && scoreList.length > 0}}">
+        <button class="btn-big btn-soft-bg" bindtap="onAddScore">+ 记一条成绩</button>
+      </view>
+
+      <view class="pb-safe"></view>
+    </block>
+  </block>
+
+  <!-- ==================== 块3:获得的荣誉 ==================== -->
+  <block wx:else>
+
+    <block wx:if="{{honorLoading}}">
+      <view class="card">
+        <view class="skeleton" style="width:100%;height:200rpx;"></view>
+      </view>
+      <view class="card">
+        <view class="skeleton" style="width:100%;height:200rpx;"></view>
+      </view>
+    </block>
+
+    <block wx:elif="{{honorError}}">
+      <view class="card">
+        <view class="empty">
+          <view class="empty-icon">☁️</view>
+          <view>{{honorError}}</view>
+        </view>
+        <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="section-title" wx:if="{{honorList.length > 0}}">
+        <text>荣誉墙</text>
+        <text class="more">{{honorList.length}} 项</text>
+      </view>
+
+      <view class="honor-wall" wx:if="{{honorList.length > 0}}">
+        <view class="card honor-card" wx:for="{{honorList}}" wx:key="_id">
+          <image
+            wx:if="{{item.photo}}"
+            class="honor-photo"
+            src="{{item.photo}}"
+            mode="aspectFill"
+          />
+          <view class="honor-empty-photo" wx:else>🏆</view>
+
+          <view class="honor-body">
+            <view class="honor-title">{{item.title}}</view>
+            <view class="honor-sub">
+              <text wx:if="{{item.org}}">{{item.org}}</text>
+              <text wx:if="{{item.org}}"> · </text>
+              <text class="num">{{item.date}}</text>
+            </view>
+            <view class="honor-note" wx:if="{{item.note}}">{{item.note}}</view>
+          </view>
+
+          <view class="honor-ops" wx:if="{{isParent}}">
+            <view class="ach-op" data-kind="honor" data-id="{{item._id}}" bindtap="onEditItem">改</view>
+            <view class="ach-op ach-op-del" data-kind="honor" data-id="{{item._id}}" bindtap="onRemoveItem">删</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card" wx:else>
+        <view class="empty">
+          <view class="empty-icon">🏆</view>
+          <view>还没有荣誉记录</view>
+          <view class="empty-tip">
+            {{isParent ? '学校或机构发的奖状、奖章,都可以拍下来存这儿' : '拿到奖状让家长记一笔,就能挂上墙啦'}}
+          </view>
+        </view>
+        <button class="btn-big btn-soft-bg" wx:if="{{isParent}}" bindtap="onAddHonor">添加一项荣誉</button>
+      </view>
+
+      <view class="btn-row" wx:if="{{isParent && honorList.length > 0}}">
+        <button class="btn-big btn-soft-bg" bindtap="onAddHonor">+ 添加荣誉</button>
+      </view>
+
+      <view class="pb-safe"></view>
+    </block>
+  </block>
+
+  <!-- ============ 勋章详情弹层 ============ -->
+  <view class="mask" wx:if="{{detailVisible}}" bindtap="onCloseDetail">
+    <view class="sheet" catchtap="noop">
+      <view class="detail-icon">{{detail.icon}}</view>
+      <view class="sheet-title">{{detail.name}}</view>
+      <view class="sheet-sub">{{detail.desc}}</view>
+
+      <view class="detail-progress" wx:if="{{!detail.unlocked}}">
+        <view class="detail-progress-text">
+          <text>{{detail.progressText}}</text>
+        </view>
+        <view class="detail-bar">
+          <view class="detail-bar-fill" style="width:{{detail.percent}}%"></view>
+        </view>
+      </view>
+
+      <view class="detail-unlocked" wx:else>
+        <text>🏅 已经拿到啦,继续加油</text>
+      </view>
+
+      <button class="btn-big btn-primary-bg mt-24" bindtap="onCloseDetail">知道啦</button>
+    </view>
+  </view>
+
+  <!-- ============ 成绩 / 荣誉 录入弹层 ============ -->
+  <view class="mask" wx:if="{{editorVisible}}" bindtap="onCloseEditor">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">
+        {{editorId ? '修改' : '添加'}}{{editorKind === 'score' ? '成绩' : '荣誉'}}
+      </view>
+      <view class="sheet-sub">
+        {{editorKind === 'score' ? '学校考试、测验的成绩' : '学校或机构颁发的荣誉,可以拍张照片'}}
+      </view>
+
+      <scroll-view scroll-y class="sheet-body">
+
+        <!-- 日期(两块都要) -->
+        <view class="field">
+          <view class="field-label">日期</view>
+          <picker mode="date" value="{{form.date}}" bindchange="onFormInput" data-field="date">
+            <view class="field-value num">{{form.date}}</view>
+          </picker>
+        </view>
+
+        <!-- ---- 成绩 ---- -->
+        <block wx:if="{{editorKind === 'score'}}">
+          <view class="field">
+            <view class="field-label">科目</view>
+            <input
+              class="field-input"
+              value="{{form.subject}}"
+              placeholder="如:语文"
+              maxlength="10"
+              data-field="subject"
+              bindinput="onFormInput"
+            />
+          </view>
+
+          <view class="field">
+            <view class="field-label">怎么记</view>
+            <view class="chip-row">
+              <view
+                class="chip {{form.type === 'score' ? 'chip-on' : ''}}"
+                data-field="type" data-v="score" bindtap="onFormPick"
+              >分数</view>
+              <view
+                class="chip {{form.type === 'level' ? 'chip-on' : ''}}"
+                data-field="type" data-v="level" bindtap="onFormPick"
+              >等级</view>
+            </view>
+          </view>
+
+          <view class="field" wx:if="{{form.type === 'score'}}">
+            <view class="field-label">分数 / 满分</view>
+            <view class="field-inline">
+              <input
+                class="field-input field-input-sm num"
+                type="digit"
+                value="{{form.score}}"
+                placeholder="98"
+                data-field="score"
+                bindinput="onFormInput"
+              />
+              <text class="field-sep">/</text>
+              <input
+                class="field-input field-input-sm num"
+                type="number"
+                value="{{form.full}}"
+                placeholder="100"
+                data-field="full"
+                bindinput="onFormInput"
+              />
+            </view>
+          </view>
+
+          <view class="field" wx:else>
+            <view class="field-label">等级</view>
+            <view class="chip-row">
+              <view
+                class="chip {{form.level === item ? 'chip-on' : ''}}"
+                wx:for="{{levels}}" wx:key="*this"
+                data-field="level" data-v="{{item}}" bindtap="onFormPick"
+              >{{item}}</view>
+            </view>
+          </view>
+        </block>
+
+        <!-- ---- 荣誉 ---- -->
+        <block wx:else>
+          <view class="field">
+            <view class="field-label">荣誉名称</view>
+            <input
+              class="field-input"
+              value="{{form.title}}"
+              placeholder="如:三好学生"
+              maxlength="24"
+              data-field="title"
+              bindinput="onFormInput"
+            />
+          </view>
+
+          <view class="field">
+            <view class="field-label">颁发单位(可选)</view>
+            <input
+              class="field-input"
+              value="{{form.org}}"
+              placeholder="如:XX小学"
+              maxlength="24"
+              data-field="org"
+              bindinput="onFormInput"
+            />
+          </view>
+
+          <view class="field">
+            <view class="field-label">奖状照片(可选)</view>
+            <view class="photo-row" bindtap="onPickPhoto">
+              <image wx:if="{{form.photo}}" class="photo-thumb" src="{{form.photo}}" mode="aspectFill" />
+              <view class="photo-pick" wx:else>
+                <view class="photo-plus">+</view>
+                <view class="photo-tip">点这里选一张</view>
+              </view>
+            </view>
+            <view class="field-tip" wx:if="{{form.photo}}">再点一次可以换一张</view>
+          </view>
+        </block>
+
+        <view class="field">
+          <view class="field-label">备注(可选)</view>
+          <input
+            class="field-input"
+            value="{{form.note}}"
+            placeholder="写点什么"
+            maxlength="50"
+            data-field="note"
+            bindinput="onFormInput"
+          />
+        </view>
+      </scroll-view>
+
+      <view class="btn-row">
+        <button class="btn-big btn-ghost-bg" bindtap="onCloseEditor">取消</button>
+        <button
+          class="btn-big btn-primary-bg {{saving ? 'btn-disabled' : ''}}"
+          bindtap="onSubmitEditor"
+        >{{saving ? '保存中' : '保存'}}</button>
+      </view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,64 @@
+<!-- 家长密码页(verify / set / change 三态共用)
+
+     ★ 用自绘数字键盘而不是 input
+       原因:input 会唤起系统键盘,家长密码场景下系统键盘有记忆、
+       有输入法联想,反而更容易被看到。自绘键盘只有数字且不落任何缓存。 -->
+
+<view class="page pin-page">
+
+  <view class="pin-top">
+    <view class="pin-title">{{title}}</view>
+    <view class="pin-sub">{{subtitle}}</view>
+  </view>
+
+  <!-- 密码点阵 -->
+  <view class="pin-dots" id="pinPad">
+    <view
+      class="pin-dot {{item ? 'pin-dot-on' : ''}}"
+      wx:for="{{dots}}"
+      wx:key="index"
+    ></view>
+  </view>
+
+  <!-- 提示 / 错误 / 锁定倒计时 -->
+  <view class="pin-msg {{locked ? 'pin-msg-lock' : ''}}">
+    <block wx:if="{{locked}}">
+      <view>{{errorText}}</view>
+      <view class="pin-countdown num">{{remainText}}</view>
+    </block>
+    <block wx:elif="{{errorText}}">
+      <view>{{errorText}}</view>
+    </block>
+    <block wx:elif="{{action === 'change' && stage === 'confirm'}}">
+      <view>两次输入要一样哦</view>
+    </block>
+    <block wx:else>
+      <view>　</view>
+    </block>
+  </view>
+
+  <!-- 数字键盘 -->
+  <view class="pin-pad">
+    <view class="pin-key num" data-key="1" bindtap="onKey">1</view>
+    <view class="pin-key num" data-key="2" bindtap="onKey">2</view>
+    <view class="pin-key num" data-key="3" bindtap="onKey">3</view>
+    <view class="pin-key num" data-key="4" bindtap="onKey">4</view>
+    <view class="pin-key num" data-key="5" bindtap="onKey">5</view>
+    <view class="pin-key num" data-key="6" bindtap="onKey">6</view>
+    <view class="pin-key num" data-key="7" bindtap="onKey">7</view>
+    <view class="pin-key num" data-key="8" bindtap="onKey">8</view>
+    <view class="pin-key num" data-key="9" bindtap="onKey">9</view>
+    <view class="pin-key pin-key-fn" data-key="clear" bindtap="onKey">清空</view>
+    <view class="pin-key num" data-key="0" bindtap="onKey">0</view>
+    <view class="pin-key pin-key-fn" data-key="del" bindtap="onKey">删除</view>
+  </view>
+
+  <view class="pin-cancel" bindtap="onBack">
+    {{action === 'set' && next === 'tab' ? '先不设置' : '取消'}}
+  </view>
+
+  <view class="pin-tip">
+    密码只保存在云端,不写在手机里
+  </view>
+
+</view>

@@ -1,0 +1,241 @@
+<!-- 行为规则库 / 任务管理(原型稿页面2)
+
+     ★ 两栏切换:加分项 / 扣分项(扣分栏孩子看不到)
+     ★ 已关闭的项默认折叠 —— 规则库长了我怕家长找不到想开的那条
+     ★ 孩子模式是本页的"只读版":同一套卡片,只是没有开关和加号 -->
+
+<view class="page">
+
+  <!-- ============ 分栏 ============ -->
+  <view class="tab-bar">
+    <view
+      class="tab-chip {{tab === 'bonus' ? 'tab-chip-b' : ''}}"
+      data-tab="bonus"
+      bindtap="onSwitchTab"
+    >
+      加分项
+      <text class="tab-count num">{{bonus.length}}</text>
+    </view>
+    <view
+      wx:if="{{isParent}}"
+      class="tab-chip {{tab === 'penalty' ? 'tab-chip-p' : ''}}"
+      data-tab="penalty"
+      bindtap="onSwitchTab"
+    >
+      扣分项
+      <text class="tab-count num">{{penalty.length}}</text>
+    </view>
+  </view>
+
+  <view class="tab-hint">
+    {{tab === 'bonus' ? '做到了就勾一下,加分会记进当天得分' : '犯错了才勾,扣分不会影响累计总积分'}}
+  </view>
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:110rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:110rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <!-- ============ 加分项 ============ -->
+    <block wx:if="{{tab === 'bonus'}}">
+      <view class="card rule-card" wx:if="{{bonus.length > 0}}">
+        <block wx:for="{{bonus}}" wx:key="_id" wx:for-item="item">
+          <view class="rule-item {{item.active ? '' : 'rule-item-off'}}" wx:if="{{item.active || showInactive}}">
+            <view class="rule-left">
+              <view class="rule-name">
+                {{item.name}}
+                <text wx:if="{{item.preset}}" class="rule-preset">系统</text>
+              </view>
+              <view class="rule-meta">
+                <text>{{item.categoryLabel}}</text>
+                <text wx:if="{{item.medalLabel}}" class="rule-medal"> · {{item.medalLabel}}</text>
+              </view>
+            </view>
+
+            <view class="rule-score b-text num">{{item.scoreText}}</view>
+
+            <view class="rule-ops" wx:if="{{isParent}}">
+              <text class="rule-op" data-id="{{item._id}}" data-kind="bonus" bindtap="onOpenEdit">改</text>
+              <text
+                class="rule-op {{item.active ? '' : 'rule-op-on'}}"
+                data-id="{{item._id}}"
+                data-kind="bonus"
+                bindtap="onToggleActive"
+              >{{item.active ? '关' : '开'}}</text>
+              <text
+                wx:if="{{item.canDelete}}"
+                class="rule-op rule-op-bad"
+                data-id="{{item._id}}"
+                data-kind="bonus"
+                bindtap="onDeleteTask"
+              >删</text>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view class="card" wx:else>
+        <view class="empty">
+          <view class="empty-icon">📋</view>
+          <view>还没有加分项</view>
+          <view class="empty-tip">{{isParent ? '点下面的按钮加一条' : '让家长来添加吧'}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 扣分项 ============ -->
+    <block wx:else>
+      <view class="card rule-card" wx:if="{{penalty.length > 0}}">
+        <block wx:for="{{penalty}}" wx:key="_id" wx:for-item="item">
+          <view class="rule-item {{item.active ? '' : 'rule-item-off'}}" wx:if="{{item.active || showInactive}}">
+            <view class="rule-left">
+              <view class="rule-name">
+                {{item.name}}
+                <text wx:if="{{item.preset}}" class="rule-preset">系统</text>
+              </view>
+              <view class="rule-meta">
+                <text>{{item.categoryLabel}}</text>
+                <text wx:if="{{item.medalLabel}}" class="rule-medal"> · {{item.medalLabel}}</text>
+              </view>
+            </view>
+
+            <view class="rule-score p-text num">{{item.scoreText}}</view>
+
+            <view class="rule-ops">
+              <text class="rule-op" data-id="{{item._id}}" data-kind="penalty" bindtap="onOpenEdit">改</text>
+              <text
+                class="rule-op {{item.active ? '' : 'rule-op-on'}}"
+                data-id="{{item._id}}"
+                data-kind="penalty"
+                bindtap="onToggleActive"
+              >{{item.active ? '关' : '开'}}</text>
+              <text
+                wx:if="{{item.canDelete}}"
+                class="rule-op rule-op-bad"
+                data-id="{{item._id}}"
+                data-kind="penalty"
+                bindtap="onDeleteTask"
+              >删</text>
+            </view>
+          </view>
+        </block>
+
+        <view class="rule-note">
+          单日扣分有上限(家长在设置里调整),到了上限再勾会被拦一下 —— 
+          这是怕情绪上头的时候扣过头
+        </view>
+      </view>
+
+      <view class="card" wx:else>
+        <view class="empty">
+          <view class="empty-icon">📋</view>
+          <view>还没有扣分项</view>
+          <view class="empty-tip">点下面的按钮加一条</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 已关闭的项 ============ -->
+    <view class="inactive-bar" bindtap="onToggleInactive">
+      <text>{{showInactive ? '收起已关闭的行为' : '显示已关闭的行为'}}</text>
+    </view>
+
+    <!-- ============ 家长:新增 ============ -->
+    <block wx:if="{{isParent}}">
+      <view class="btn-row">
+        <button class="btn-big btn-primary-bg" bindtap="onOpenCreate">
+          ＋ 添加{{tab === 'bonus' ? '加分' : '扣分'}}行为
+        </button>
+      </view>
+    </block>
+
+    <view class="pb-safe"></view>
+  </block>
+
+  <!-- ============ 编辑弹层 ============ -->
+  <view class="mask" wx:if="{{editorVisible}}" bindtap="onCloseEditor">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">
+        {{editorMode === 'create' ? '添加' : '修改'}}{{tab === 'bonus' ? '加分' : '扣分'}}行为
+      </view>
+      <view class="sheet-sub">
+        {{tab === 'bonus' ? '做到这件事就加分' : '出现这个行为才扣分'}}
+      </view>
+
+      <view class="field">
+        <view class="field-label">行为名称</view>
+        <input
+          class="field-input"
+          placeholder="{{tab === 'bonus' ? '例如:主动帮妈妈拎东西' : '例如:睡前偷偷玩手机'}}"
+          maxlength="20"
+          value="{{formName}}"
+          bindinput="onFormName"
+        />
+      </view>
+
+      <view class="field">
+        <view class="field-label">{{tab === 'bonus' ? '加几分' : '扣几分'}}</view>
+        <input
+          class="field-input"
+          type="number"
+          placeholder="1 - 50"
+          value="{{formScore}}"
+          bindinput="onFormScore"
+        />
+        <view class="field-hint">只填数字,加减方向由上面的分栏决定</view>
+      </view>
+
+      <view class="field">
+        <view class="field-label">分类</view>
+        <view class="chip-wrap">
+          <view
+            class="chip {{formCategory === item.key ? 'chip-on' : ''}}"
+            wx:for="{{categories}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onPickCategory"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="field">
+        <view class="field-label">关联勋章(可不选)</view>
+        <view class="chip-wrap">
+          <view
+            class="chip {{formMedalTag === item.key ? 'chip-on' : ''}}"
+            wx:for="{{medalTagOptions}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onPickMedalTag"
+          >{{item.label}}</view>
+        </view>
+        <view class="field-hint">选了以后,完成这条行为会同时计入对应勋章的进度</view>
+      </view>
+
+      <view class="btn-row editor-actions">
+        <button class="btn-big btn-ghost-bg" bindtap="onCloseEditor">取消</button>
+        <button class="btn-big btn-primary-bg" bindtap="onSaveTask">保存</button>
+      </view>
+    </view>
+  </view>
+
+</view>

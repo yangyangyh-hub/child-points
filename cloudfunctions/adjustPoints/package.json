@@ -1,0 +1,9 @@
+{
+  "name": "adjustPoints",
+  "version": "1.0.0",
+  "description": "家长手动加减分 / 犯错补救 / 冲正历史流水,含 PIN 校验与上限保护",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

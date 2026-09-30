@@ -1,0 +1,198 @@
+/* 统计页样式(原型稿页面5)
+
+   设计要点:
+     1) 数值统一大号等宽 —— 家长会盯着数字看,跳动会显得不专业
+     2) 排行榜不给"奖牌"图标,用序号圆点 —— 避免把孩子的行为做成竞技排名
+     3) 扣分区用暖色但**不红**,并且配一句"不是态度问题"的说明 */
+
+.page { padding-top: 16rpx; }
+
+/* ============ 区间切换 ============ */
+
+.range-bar {
+  display: flex;
+  gap: 16rpx;
+  margin: 0 24rpx 24rpx;
+}
+
+.range-chip {
+  min-width: 160rpx;
+  height: 68rpx;
+  border-radius: 34rpx;
+  background: #FFFFFF;
+  color: var(--cp-text-sub);
+  font-size: 27rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 12rpx rgba(255, 122, 89, 0.14);
+}
+
+.range-chip-on {
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ============ 周报 ============ */
+
+.report-card {
+  background: linear-gradient(135deg, var(--cp-primary-soft) 0%, #DCEBFC 100%);
+  box-shadow: 0 6rpx 26rpx rgba(255, 122, 89, 0.14);
+}
+
+.report-headline {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #24548F;
+  line-height: 1.5;
+}
+
+.report-range {
+  font-size: 23rpx;
+  color: #7A93AE;
+  margin-top: 10rpx;
+  margin-bottom: 22rpx;
+}
+
+.report-line {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 14rpx;
+}
+
+.report-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 7rpx;
+  margin-top: 14rpx;
+  flex-shrink: 0;
+}
+
+.report-dot-ok { background: var(--cp-bonus); }
+.report-dot-warn { background: var(--cp-warn); }
+
+.report-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 27rpx;
+  color: #3D5A78;
+  line-height: 1.65;
+  padding-left: 16rpx;
+}
+
+/* ============ 概览 ============ */
+
+.stat-card { padding: 30rpx 12rpx; }
+
+.stat-row { display: flex; }
+
+.stat-cell {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: var(--cp-text);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: var(--cp-text-sub);
+  margin-top: 6rpx;
+}
+
+.stat-note {
+  font-size: 21rpx;
+  color: var(--cp-text-hint);
+  line-height: 1.6;
+  margin-top: 20rpx;
+  padding: 0 8rpx;
+}
+
+/* ============ 折线图 ============ */
+
+.chart-card { padding: 24rpx 16rpx; }
+
+.chart-wrap { position: relative; }
+
+.trend-chart {
+  width: 100%;
+  height: 360rpx;
+}
+
+/* 数据全 0 时的遮罩 —— 空图容易被误读成"坏了" */
+.chart-mask {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25rpx;
+  color: var(--cp-text-hint);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* ============ 排行 ============ */
+
+.rank-card { padding: 12rpx 26rpx; }
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+}
+
+.rank-item + .rank-item {
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+.rank-no {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  background: var(--cp-surface);
+  color: var(--cp-text-sub);
+  font-size: 26rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-no-1 { background: var(--cp-primary-soft); color: var(--cp-primary); }
+.rank-no-2 { background: var(--cp-primary-soft); color: #5FA0F7; }
+.rank-no-3 { background: var(--cp-surface); color: var(--cp-text-sub); }
+.rank-no-bad { background: var(--cp-danger-soft); color: var(--cp-danger); }
+
+.rank-body {
+  flex: 1;
+  min-width: 0;
+  padding: 0 18rpx;
+}
+
+.rank-name {
+  font-size: 29rpx;
+  font-weight: 500;
+  color: var(--cp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-sub {
+  font-size: 22rpx;
+  color: var(--cp-text-sub);
+  margin-top: 4rpx;
+}
+
+.rank-score {
+  font-size: 32rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}

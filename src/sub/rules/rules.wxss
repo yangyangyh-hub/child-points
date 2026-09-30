@@ -1,0 +1,215 @@
+/* 规则库 / 任务管理样式
+
+   设计要点:
+     1) 「改 / 关 / 删」做成小号文字按钮而不是图标 —— 家长是成年人,
+        文字比图标不容易点错。三个操作并排但用颜色区分轻重(删=暖色)
+     2) 已关闭的项整行降透明度 + 保留可读,给"关"字按钮换成"开"字高亮
+     3) 孩子模式没有操作列,卡片右侧只留分值,版式自然收紧 */
+
+.page { padding-top: 16rpx; }
+
+/* ============ 分栏 ============ */
+
+.tab-bar {
+  display: flex;
+  gap: 16rpx;
+  margin: 0 24rpx;
+}
+
+.tab-chip {
+  flex: 1;
+  height: 84rpx;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  color: var(--cp-text-sub);
+  font-size: 29rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 12rpx rgba(255, 122, 89, 0.14);
+}
+
+.tab-chip-b {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-weight: 700;
+}
+
+.tab-chip-p {
+  background: var(--cp-penalty-soft);
+  color: var(--cp-danger);
+  font-weight: 700;
+}
+
+.tab-count {
+  font-size: 24rpx;
+  margin-left: 10rpx;
+  opacity: 0.72;
+}
+
+.tab-hint {
+  font-size: 23rpx;
+  color: var(--cp-text-sub);
+  text-align: center;
+  padding: 18rpx 40rpx 22rpx;
+  line-height: 1.5;
+}
+
+/* ============ 行为列表 ============ */
+
+.rule-card { padding: 8rpx 26rpx; }
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+}
+
+.rule-item + .rule-item {
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+.rule-item-off { opacity: 0.48; }
+
+.rule-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.rule-name {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--cp-text);
+  display: flex;
+  align-items: center;
+}
+
+.rule-preset {
+  font-size: 19rpx;
+  color: var(--cp-text-sub);
+  background: var(--cp-surface);
+  border-radius: 8rpx;
+  padding: 2rpx 10rpx;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+.rule-meta {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rule-medal { color: #A9B8C6; }
+
+.rule-score {
+  font-size: 34rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+  padding-left: 16rpx;
+  min-width: 90rpx;
+  text-align: right;
+}
+
+/* ============ 操作 ============ */
+
+.rule-ops {
+  display: flex;
+  gap: 8rpx;
+  flex-shrink: 0;
+  padding-left: 12rpx;
+}
+
+.rule-op {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  background: var(--cp-bg);
+  border-radius: 24rpx;
+  padding: 8rpx 20rpx;
+  line-height: 1.4;
+}
+
+/* 已关闭状态下的"开":用主色高亮,引导家长把它打开 */
+.rule-op-on {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-weight: 600;
+}
+
+.rule-op-bad {
+  background: var(--cp-danger-soft);
+  color: var(--cp-danger);
+}
+
+.rule-note {
+  font-size: 21rpx;
+  color: var(--cp-text-hint);
+  line-height: 1.65;
+  padding: 20rpx 0 12rpx;
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+/* ============ 已关闭开关 ============ */
+
+.inactive-bar {
+  text-align: center;
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+  padding: 10rpx 0 24rpx;
+}
+
+/* ============ 弹层 ============ */
+
+.field { margin-bottom: 28rpx; }
+
+.field-label {
+  font-size: 27rpx;
+  color: var(--cp-text-sub);
+  margin-bottom: 12rpx;
+}
+
+.field-input {
+  height: 88rpx;
+  background: var(--cp-bg);
+  border-radius: 20rpx;
+  padding: 0 26rpx;
+  font-size: 30rpx;
+  color: var(--cp-text);
+}
+
+.field-hint {
+  font-size: 21rpx;
+  color: var(--cp-text-hint);
+  margin-top: 10rpx;
+  line-height: 1.5;
+}
+
+.chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.chip {
+  height: 66rpx;
+  border-radius: 33rpx;
+  background: var(--cp-bg);
+  color: var(--cp-text-sub);
+  font-size: 25rpx;
+  padding: 0 26rpx;
+  display: flex;
+  align-items: center;
+}
+
+.chip-on {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-weight: 600;
+  border: 2rpx solid #B9D8FD;
+}
+
+.editor-actions { margin: 8rpx 0 0; gap: 16rpx; }

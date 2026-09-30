@@ -1,0 +1,157 @@
+<!-- 成长日志(原型稿页面6)
+
+     ★ 时间轴式排列:日期在左、内容在右 —— 比卡片堆叠更容易"翻历史"
+     ★ 每条显示当天净得分(写入时的快照)。这就是原型稿要求的
+       「自动关联日期、当日积分」 -->
+
+<view class="page">
+
+  <!-- ============ 顶部快捷入口 ============ -->
+  <view class="card quick-card">
+    <view class="quick-body">
+      <view class="quick-title">今天想说点什么?</view>
+      <view class="quick-sub">记录一句,过几个月回头看很有意思</view>
+    </view>
+    <view class="quick-btn" bindtap="onOpenToday">写今天</view>
+  </view>
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:120rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:120rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <view class="section-title" wx:if="{{list.length > 0}}">
+      <text>成长足迹</text>
+      <text class="more">共 {{total}} 天</text>
+    </view>
+
+    <!-- ============ 日志列表 ============ -->
+    <view class="card timeline-card" wx:if="{{list.length > 0}}">
+      <view
+        class="log-item"
+        wx:for="{{list}}"
+        wx:key="_id"
+        data-id="{{item._id}}"
+        bindtap="onTapItem"
+      >
+        <view class="log-date">
+          <view class="log-date-main">{{item.dateText}}</view>
+          <view class="log-date-sub">{{item.weekday}}</view>
+        </view>
+
+        <view class="log-axis">
+          <view class="log-dot"></view>
+          <view class="log-line"></view>
+        </view>
+
+        <view class="log-body">
+          <view class="log-text">{{item.text}}</view>
+          <view class="log-net">
+            <text>当天净得分 </text>
+            <text class="num {{item.netPoints >= 0 ? 'b-text' : 'p-text'}}">{{item.netText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 空状态 ============ -->
+    <view class="card" wx:else>
+      <view class="empty">
+        <view class="empty-icon">📖</view>
+        <view>还没有写过日志</view>
+        <view class="empty-tip">点上面「写今天」记第一句吧</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onGoCheckin">先去打个卡</button>
+    </view>
+
+    <!-- ============ 加载更多 ============ -->
+    <view class="load-more" wx:if="{{hasMore}}">
+      <text wx:if="{{loadingMore}}">加载中…</text>
+      <text wx:else>上拉加载更多</text>
+    </view>
+    <view class="load-more" wx:elif="{{list.length > 0}}">
+      <text>已经到底啦</text>
+    </view>
+
+    <view class="pb-safe"></view>
+  </block>
+
+  <!-- ============ 写日志弹层 ============ -->
+  <view class="mask" wx:if="{{editorVisible}}" bindtap="onCloseEditor">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">{{editingExisting ? '修改日志' : '写日志'}}</view>
+
+      <view class="editor-date" bindtap="onOpenPicker">
+        <text>{{editingDateText}}</text>
+        <text class="editor-date-change">换一天 ›</text>
+      </view>
+
+      <textarea
+        class="editor-area"
+        placeholder="今天孩子有什么让你印象深的地方?"
+        placeholder-class="editor-ph"
+        maxlength="{{maxLen}}"
+        value="{{editingText}}"
+        bindinput="onLogInput"
+        auto-height
+      ></textarea>
+
+      <view class="editor-count">
+        <text class="num">{{editingText.length}}</text>
+        <text> / {{maxLen}}</text>
+      </view>
+
+      <view class="btn-row editor-actions">
+        <button
+          wx:if="{{editingExisting}}"
+          class="btn-big btn-danger-bg"
+          bindtap="onClearLog"
+        >清空</button>
+        <button wx:else class="btn-big btn-ghost-bg" bindtap="onCloseEditor">取消</button>
+        <button class="btn-big btn-primary-bg" bindtap="onSaveLog">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 日期选择弹层 ============ -->
+  <view class="mask" wx:if="{{pickerVisible}}" bindtap="onClosePicker">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">选择日期</view>
+      <view class="sheet-sub">可以补写过去某天的日志</view>
+
+      <picker
+        mode="date"
+        value="{{pickerValue}}"
+        end="{{maxDate}}"
+        bindchange="onPickerChange"
+      >
+        <view class="picker-display">{{pickerValue}}</view>
+      </picker>
+
+      <view class="btn-row editor-actions">
+        <button class="btn-big btn-ghost-bg" bindtap="onClosePicker">取消</button>
+        <button class="btn-big btn-primary-bg" bindtap="onPickerConfirm">确定</button>
+      </view>
+    </view>
+  </view>
+
+</view>

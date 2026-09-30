@@ -1,0 +1,9 @@
+{
+  "name": "achievement",
+  "version": "1.0.0",
+  "description": "成绩记录与获得荣誉的列表/新增/修改/删除(写操作需家长密码)",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

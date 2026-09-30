@@ -1,0 +1,9 @@
+{
+  "name": "taskList",
+  "version": "1.0.0",
+  "description": "行为规则库列表(加分项/扣分项两组,含已关闭项)",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

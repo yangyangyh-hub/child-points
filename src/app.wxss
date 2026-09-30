@@ -1,0 +1,339 @@
+/* 儿童成长积分打卡小程序 · 全局样式
+
+   风格:卡通柔和、大按钮、适合小朋友查看。
+   色彩:暖阳橙 —— 2026-09-24 从「天蓝 + 奶油」整体换肤(用户:蓝色不热情)。
+        参考图是暖橙渐变 + 圆润卡片 + 三色大按钮,所以主色换成橙,
+        加分用绿、扣分用红、统计用蓝,和底部三个按钮对应。
+
+   ★ 数字一律用等宽字体(tabular-nums),避免加分后数字跳动导致家长以为算错。
+   ★ 不用紫渐变、不用玻璃拟态、不用 admin dashboard 风格 —— 这是产品调性要求。
+   ★ 不加营销口号/标语 —— 用户明确禁止。
+
+   命名约定:
+     .card / .btn-* / .empty / .section-title   基础件
+     .hint / .tag / .row / .divider             组合件
+     .b-* / .p-*                                加分/扣分语义色(语义前缀而非颜色名,
+                                                方便以后整体换配色)
+
+   ★★ 关于字体(2026-09-24,这里有个必须知道的现实约束)
+     小程序**不能打包字体文件** —— 一套中文字体 5–10MB,而主包上限 2MB。
+     所以只能在系统自带字体里挑,能做的是"优先用哪个、没有时退回哪个"。
+     用户手机是**安卓**:安卓系统里没有中文圆体(Yuanti SC 是苹果的),
+     所以圆体栈在安卓上会自动退回系统黑体 —— 不会变丑,但也不会变圆。
+     ⇒ 我把圆体写在最前面(iOS/将来换机才生效,零副作用),
+       安卓上真正能改善观感的是**排版**:字号、行距、字间距(见下面 page 里的设置)。 */
+
+page {
+  /* ---------- 配色变量:换肤只改这里 ---------- */
+  --cp-bg: #FFF6EF;              /* 页面底：暖米白 */
+  --cp-primary: #FF7A59;         /* 主色：暖橙 */
+  --cp-primary-light: #FFB49A;   /* 主色浅（渐变起点） */
+  --cp-primary-soft: #FFEDE5;    /* 主色浅底 */
+  --cp-text: #4A2A20;            /* 正文：暖棕黑（比冷灰更暖） */
+  --cp-text-sub: #9A8578;        /* 次要文字 */
+  --cp-text-hint: #C4AF9F;       /* 更浅的提示文字 */
+  --cp-line: #F7E6DA;            /* 分隔线 */
+  --cp-surface: #FDF1E8;         /* 浅底（输入框、chip） */
+  --cp-bonus: #3FA97A;           /* 加分绿 */
+  --cp-bonus-soft: #E7F6EE;
+  --cp-bonus-deep: #2F8A62;
+  --cp-penalty: #FF6B5B;         /* 扣分红 */
+  --cp-penalty-soft: #FFE9E4;
+  --cp-danger: #E2594A;          /* 危险操作（删除/重置） */
+  --cp-danger-soft: #FFEAE5;
+  --cp-warn: #F5A623;
+  --cp-warn-soft: #FFF3E0;
+  --cp-warn-deep: #C97A10;
+
+  background: var(--cp-bg);
+  /* ★ 字体栈:圆体优先,逐层回退到各平台系统字体。
+     安卓没有中文圆体 → 最终落到 sans-serif(系统黑体),不会出方框乱码。 */
+  font-family: 'Yuanti SC', 'PingFang SC', 'Hiragino Sans GB',
+               'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+  color: var(--cp-text);
+  font-size: 30rpx;
+  /* ★ 排版(安卓上真正生效的改善):行距放宽 + 字间微距,读起来更松、更亲和 */
+  line-height: 1.68;
+  letter-spacing: 0.3rpx;
+  /* 桌面端/平板不至于把内容拉得极宽 */
+  --cp-max: 750rpx;
+}
+
+/* ============ 数字与排版 ============ */
+
+/* 数字等宽:所有需要对齐的数字都加这个类 */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.muted { color: var(--cp-text-sub); }
+.small { font-size: 24rpx; }
+.strong { font-weight: 700; }
+.center { text-align: center; }
+
+/* ============ 语义色 ============ */
+/* 用语义名而不是 blue/red:配色调整时只改这一处 */
+/* ★ 加分用绿(和底部「加分」按钮同色)、扣分用红 —— 2026-09-24
+   原来加分和主色都是蓝,换肤后如果加分也变橙,就和「扣分」的暖色撞在一起、
+   分不清好坏。参考图里加分是绿、扣分是红,按那个来。 */
+.b-text { color: var(--cp-bonus); }          /* 加分（绿） */
+.p-text { color: var(--cp-penalty); }        /* 扣分（红） */
+.b-bg { background: var(--cp-bonus-soft); }
+.p-bg { background: var(--cp-penalty-soft); }
+.ok-text { color: var(--cp-bonus); }
+.warn-text { color: var(--cp-warn); }
+
+/* ============ 卡片 ============ */
+
+.card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(255, 122, 89, 0.16);
+  padding: 32rpx;
+  margin: 0 24rpx 24rpx;
+}
+
+/* 紧凑卡(列表项用,内边距小一半) */
+.card-tight {
+  padding: 22rpx 26rpx;
+  margin-bottom: 16rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--cp-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-sub {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  margin-top: 6rpx;
+}
+
+/* ============ 按钮 ============ */
+
+/* 大按钮:小朋友也能轻松点到。最小高度 96rpx ≈ 48px */
+.btn-big {
+  min-height: 96rpx;
+  border-radius: 48rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0 40rpx;
+}
+
+.btn-big::after { border: none; }   /* 去掉小程序 button 默认的边框伪元素 */
+
+.btn-primary-bg {
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  color: #FFFFFF;
+}
+
+.btn-soft-bg {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+}
+
+.btn-ghost-bg {
+  background: var(--cp-surface);
+  color: var(--cp-text-sub);
+}
+
+/* 危险操作(重置/删除)—— 刻意不做成大红色块,避免误触的视觉吸引 */
+.btn-danger-bg {
+  background: var(--cp-danger-soft);
+  color: var(--cp-danger);
+}
+
+.btn-sm {
+  min-height: 64rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  padding: 0 26rpx;
+}
+
+.btn-disabled {
+  opacity: 0.45;
+}
+
+/* 按钮行:两个并排 */
+.btn-row {
+  display: flex;
+  gap: 20rpx;
+  margin: 0 24rpx 24rpx;
+}
+.btn-row .btn-big { flex: 1; }
+
+/* ============ 空状态 ============ */
+/* 每个模块都必须有,不能显示空白容器 */
+
+.empty {
+  text-align: center;
+  color: var(--cp-text-sub);
+  font-size: 28rpx;
+  padding: 64rpx 0;
+}
+
+.empty-icon {
+  font-size: 72rpx;
+  line-height: 1;
+  margin-bottom: 16rpx;
+  opacity: 0.5;
+}
+
+.empty-tip {
+  font-size: 24rpx;
+  color: var(--cp-text-hint);
+  margin-top: 10rpx;
+}
+
+/* ============ 分节标题 ============ */
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--cp-text);
+  margin: 0 24rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title .more {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: var(--cp-text-sub);
+}
+
+/* ============ 标签 ============ */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  background: var(--cp-surface);
+  color: var(--cp-text-sub);
+}
+
+.tag-b { background: var(--cp-primary-soft); color: var(--cp-primary); }
+.tag-p { background: var(--cp-penalty-soft); color: var(--cp-danger); }
+.tag-ok { background: var(--cp-bonus-soft); color: var(--cp-bonus-deep); }
+.tag-warn { background: var(--cp-warn-soft); color: var(--cp-warn-deep); }
+
+/* 徽标(数字小红点) */
+.badge {
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 16rpx;
+  background: var(--cp-penalty);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============ 行与分隔 ============ */
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.row-left { display: flex; align-items: center; gap: 16rpx; min-width: 0; }
+.row-left .ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.divider {
+  height: 1rpx;
+  background: var(--cp-line);
+  margin: 20rpx 0;
+}
+
+/* ============ 加载态 ============ */
+
+.loading-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 246, 239, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+}
+
+.loading-text {
+  background: rgba(74, 42, 32, 0.82);
+  color: #FFFFFF;
+  padding: 20rpx 36rpx;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+}
+
+/* 骨架屏(首屏比转圈体感快)—— 用淡灰块占位 */
+.skeleton {
+  background: linear-gradient(90deg, var(--cp-surface) 25%, var(--cp-surface) 37%, var(--cp-surface) 63%);
+  background-size: 400% 100%;
+  animation: sk 1.4s ease infinite;
+  border-radius: 12rpx;
+}
+@keyframes sk {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ============ 弹层 ============ */
+
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(74, 42, 32, 0.45);
+  z-index: 800;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 40rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  max-height: 80vh;
+  box-sizing: border-box;
+}
+
+.sheet-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10rpx;
+}
+
+.sheet-sub {
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+/* ============ 通用间距 ============ */
+
+.mt-8 { margin-top: 8rpx; }
+.mt-16 { margin-top: 16rpx; }
+.mt-24 { margin-top: 24rpx; }
+.mb-16 { margin-bottom: 16rpx; }
+.mb-24 { margin-bottom: 24rpx; }
+.pb-safe { padding-bottom: calc(40rpx + env(safe-area-inset-bottom)); }

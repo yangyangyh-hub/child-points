@@ -1,0 +1,157 @@
+<!-- 我的页(原型稿页面7)
+
+     ★ 结构:名片 → 数据概览 → 功能入口列表
+     ★ 孩子模式与家长模式的入口数量不同,但**布局不跳变** ——
+       隐藏的项只是不出现,不做成"灰掉但占位",否则孩子会好奇去点 -->
+
+<view class="page">
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card profile-card">
+      <view class="skeleton" style="width:120rpx;height:120rpx;border-radius:60rpx;"></view>
+      <view class="skeleton" style="width:200rpx;height:36rpx;margin-top:20rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:200rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <!-- ============ 还没有孩子信息 ============ -->
+  <block wx:elif="{{!child}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">🌱</view>
+        <view>还没有建立孩子的档案</view>
+        <view class="empty-tip">回到打卡页填一下昵称就能开始</view>
+      </view>
+      <button class="btn-big btn-primary-bg" bindtap="onCreateChild">去设置</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <!-- ============ 名片 ============ -->
+    <view class="card profile-card">
+      <view class="profile-avatar {{isParent ? 'profile-avatar-parent' : ''}}">
+        <image wx:if="{{child.avatar}}" src="{{child.avatar}}" mode="aspectFill" class="profile-avatar-img"/>
+        <text wx:else>{{initial}}</text>
+      </view>
+
+      <view class="profile-name">{{child.nickname}}</view>
+
+      <view class="profile-meta">
+        <text wx:if="{{child.grade}}">{{child.grade}}</text>
+        <text wx:if="{{child.grade}}" class="dot">·</text>
+        <text>{{isParent ? '家长模式' : '孩子模式'}}</text>
+      </view>
+
+      <view class="profile-mode-btn {{isParent ? 'profile-mode-btn-parent' : ''}}" bindtap="onSwitchMode">
+        {{isParent ? '切回孩子模式' : '切换到家长模式'}}
+      </view>
+    </view>
+
+    <!-- ============ 数据概览 ============ -->
+    <view class="card stat-card">
+      <view class="stat-row">
+        <view class="stat-cell">
+          <view class="stat-value num b-text">{{availablePoints}}</view>
+          <view class="stat-label">可用积分</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num ok-text">{{lifetimePoints}}</view>
+          <view class="stat-label">累计总积分</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num">{{streak.current}}</view>
+          <view class="stat-label">连续打卡</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num warn-text">{{medalUnlockedCount}}</view>
+          <view class="stat-label">获得勋章</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 功能入口 ============ -->
+    <view class="section-title">
+      <text>更多</text>
+    </view>
+
+    <view class="card menu-card">
+      <view class="menu-item" bindtap="onGoRules">
+        <text class="menu-icon">📋</text>
+        <view class="menu-body">
+          <view class="menu-name">行为规则库</view>
+          <view class="menu-sub">看看有哪些加分项和扣分项</view>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" bindtap="onGoStats">
+        <text class="menu-icon">📊</text>
+        <view class="menu-body">
+          <view class="menu-name">成长统计</view>
+          <view class="menu-sub">积分变化、完成率、排名</view>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" bindtap="onGoLog">
+        <text class="menu-icon">📖</text>
+        <view class="menu-body">
+          <view class="menu-name">成长日志</view>
+          <view class="menu-sub">每天记一句,回头看很有意思</view>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <!-- ★ 2026-09-24 删掉了「奖励兑换」和「我的勋章」两条:
+           它们是 wx.switchTab 跳到**底部导航**的「奖励」「勋章」,
+           和底部那两个按钮完全重复,从「我的」绕过去反而多一次点击。
+           下面这三条跳的是分包页(规则/统计/日志),底部没有入口,必须保留。 -->
+    </view>
+
+    <!-- 家长专属 -->
+    <block wx:if="{{isParent}}">
+      <view class="section-title">
+        <text>家长设置</text>
+      </view>
+
+      <view class="card menu-card">
+        <view class="menu-item" bindtap="onGoSetting">
+          <text class="menu-icon">⚙️</text>
+          <view class="menu-body">
+            <view class="menu-name">系统设置</view>
+            <view class="menu-sub">孩子信息 · 扣分上限 · 提醒</view>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+
+        <view class="menu-item" bindtap="onGoPin">
+          <text class="menu-icon">🔒</text>
+          <view class="menu-body">
+            <view class="menu-name">{{hasPin ? '修改家长密码' : '设置家长密码'}}</view>
+            <view class="menu-sub">{{pinHint}}</view>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="pb-safe"></view>
+  </block>
+
+</view>

@@ -1,0 +1,9 @@
+{
+  "name": "logSave",
+  "version": "1.0.0",
+  "description": "成长日志写入(与首页\"今日备注\"同一张表)",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

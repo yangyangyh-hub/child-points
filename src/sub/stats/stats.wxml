@@ -1,0 +1,167 @@
+<!-- 成长统计(原型稿页面5)
+
+     ★ 顺序有讲究:先给"这周怎么样"(结论),再给图表(细节),
+       最后给排行榜(可行动项)。反过来先甩一张图,家长看不出所以然 -->
+
+<view class="page">
+
+  <!-- ============ 区间切换 ============ -->
+  <view class="range-bar">
+    <view
+      class="range-chip {{range === 'week' ? 'range-chip-on' : ''}}"
+      data-range="week"
+      bindtap="onSwitchRange"
+    >近 7 天</view>
+    <view
+      wx:if="{{isParent}}"
+      class="range-chip {{range === 'month' ? 'range-chip-on' : ''}}"
+      data-range="month"
+      bindtap="onSwitchRange"
+    >近 30 天</view>
+  </view>
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:220rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:300rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <!-- ============ 周报 ============ -->
+    <view class="card report-card" wx:if="{{report}}">
+      <view class="report-headline">{{report.headline}}</view>
+      <view class="report-range">{{startDate}} 至 {{endDate}}</view>
+
+      <view class="report-line" wx:for="{{report.lines}}" wx:key="text">
+        <text class="report-dot {{item.kind === 'watch' ? 'report-dot-warn' : 'report-dot-ok'}}"></text>
+        <text class="report-text">{{item.text}}</text>
+      </view>
+    </view>
+
+    <!-- ============ 概览 ============ -->
+    <view class="card stat-card">
+      <view class="stat-row">
+        <view class="stat-cell">
+          <view class="stat-value num {{netPoints >= 0 ? 'b-text' : 'p-text'}}">{{netPoints}}</view>
+          <view class="stat-label">净得分</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num ok-text">{{totalBonus}}</view>
+          <view class="stat-label">加分合计</view>
+        </view>
+        <view class="stat-cell" wx:if="{{isParent}}">
+          <view class="stat-value num p-text">{{totalPenalty}}</view>
+          <view class="stat-label">扣分合计</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="stat-row">
+        <view class="stat-cell">
+          <view class="stat-value num">{{completionRate}}%</view>
+          <view class="stat-label">完成率</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num">{{checkinDays}}</view>
+          <view class="stat-label">打卡天数</view>
+        </view>
+        <view class="stat-cell">
+          <view class="stat-value num">{{totalCheckins}}</view>
+          <view class="stat-label">打卡次数</view>
+        </view>
+      </view>
+
+      <view class="stat-note">
+        完成率 = 打卡次数 ÷ (有效任务 {{activeTaskCount}} 项 × 有记录的天数),
+        所以新加任务那天不会把比率拉低
+      </view>
+    </view>
+
+    <!-- ============ 趋势折线图 ============ -->
+    <view class="section-title">
+      <text>积分变化</text>
+      <text class="more">{{rangeLabel}}</text>
+    </view>
+
+    <view class="card chart-card">
+      <view class="chart-wrap" wx:if="{{!empty}}">
+        <canvas
+          type="2d"
+          id="trendChart"
+          class="trend-chart"
+        ></canvas>
+        <view class="chart-mask" wx:if="{{!hasTrend}}">
+          <text>这段时间还没有加分记录</text>
+        </view>
+      </view>
+
+      <view class="empty" wx:else>
+        <view class="empty-icon">📈</view>
+        <view>这段时间还没有数据</view>
+        <view class="empty-tip">去打个卡,图就出来了</view>
+      </view>
+    </view>
+
+    <!-- ============ 高频加分 ============ -->
+    <view class="section-title" wx:if="{{topBonus.length > 0}}">
+      <text>做得最多的</text>
+      <text class="more">按坚持天数排</text>
+    </view>
+
+    <view class="card rank-card" wx:if="{{topBonus.length > 0}}">
+      <view class="rank-item" wx:for="{{topBonus}}" wx:key="name">
+        <view class="rank-no rank-no-{{index + 1}}">{{index + 1}}</view>
+        <view class="rank-body">
+          <view class="rank-name">{{item.name}}</view>
+          <view class="rank-sub">{{item.categoryLabel}} · 坚持 {{item.days}} 天</view>
+        </view>
+        <view class="rank-score b-text num">+{{item.score * item.days}}</view>
+      </view>
+    </view>
+
+    <!-- ============ 高频扣分(家长专属) ============ -->
+    <view class="section-title" wx:if="{{isParent && topPenalty.length > 0}}">
+      <text>需要留意的</text>
+      <text class="more">同样是按天数排</text>
+    </view>
+
+    <view class="card rank-card" wx:if="{{isParent && topPenalty.length > 0}}">
+      <view class="rank-item" wx:for="{{topPenalty}}" wx:key="name">
+        <view class="rank-no rank-no-bad">{{index + 1}}</view>
+        <view class="rank-body">
+          <view class="rank-name">{{item.name}}</view>
+          <view class="rank-sub">{{item.categoryLabel}} · {{item.days}} 天出现过</view>
+        </view>
+        <view class="rank-score p-text num">{{item.score * item.days}}</view>
+      </view>
+      <view class="stat-note">
+        这里只做客观呈现,不建议拿来跟孩子对质 —— 高频项往往是习惯,不是态度问题
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <button class="btn-big btn-soft-bg" bindtap="onGoLog">看成长日志</button>
+    </view>
+
+    <view class="pb-safe"></view>
+  </block>
+
+</view>

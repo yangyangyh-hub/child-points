@@ -1,0 +1,297 @@
+/* 奖励页样式(原型稿页面3)
+
+   设计要点:
+     1) 钱包卡突出「可用积分」,累计总分做次要说明 —— 孩子只需要关心能花多少
+     2) 奖励卡整行可点,不做成小按钮 —— 大按钮原则,小朋友点得准
+     3) 换不起的奖励**不隐藏只置灰** —— 看得见才有攒的动机(原型稿设计意图) */
+
+.page {
+  padding-top: 24rpx;
+  /* 自定义 tabBar 是 fixed 定位、不占布局流 ⇒ 留出高度 + 安全区,否则最后一项被盖住 */
+  padding-bottom: calc(136rpx + env(safe-area-inset-bottom));
+}
+
+/* ============ 钱包 ============ */
+
+.wallet-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  box-shadow: 0 8rpx 32rpx rgba(61, 139, 253, 0.28);
+}
+
+.wallet-main { min-width: 0; }
+
+.wallet-label {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.wallet-value {
+  font-size: 76rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.15;
+  margin-top: 4rpx;
+}
+
+.wallet-side {
+  text-align: right;
+  padding-left: 24rpx;
+  border-left: 1rpx solid rgba(255, 255, 255, 0.32);
+  flex-shrink: 0;
+}
+
+.wallet-side-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.wallet-side-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.wallet-side-hint {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ============ 待确认 ============ */
+
+.pending-card { border: 2rpx solid #FFE7C2; }
+
+.pending-item + .pending-item {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--cp-line);
+}
+
+.pending-icon { font-size: 44rpx; }
+
+.pending-info { min-width: 0; }
+
+.pending-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+.pending-meta {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  margin-top: 4rpx;
+}
+
+/* 待确认里的按钮行不要左右外边距 —— 已经在卡片内层了 */
+.pending-actions {
+  margin: 20rpx 0 0;
+  gap: 16rpx;
+}
+
+/* ============ 奖励分组 ============ */
+
+.group-card { padding: 12rpx 26rpx; }
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+}
+
+/* 孩子模式:没有操作行,每条之间画分隔线(最后一条不画) */
+.reward-item + .reward-item {
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+/* 家长模式:操作行跟在内容后面,分隔线画在操作行与下一条之间 */
+.reward-ops + .reward-item {
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+/* 操作行本身不占分隔线,但要有下间距把它和下一条分开 */
+.reward-ops { margin-bottom: 0; }
+
+/* 组内最后一行如果是操作行,底部留白 */
+.reward-ops:last-child { padding-bottom: 20rpx; }
+
+/* 换不起 / 已兑完:整体降透明度,但文字仍然可读 —— 不用灰色文字,显脏 */
+.reward-item-off { opacity: 0.52; }
+
+.reward-icon {
+  font-size: 56rpx;
+  width: 76rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.reward-body {
+  flex: 1;
+  min-width: 0;
+  padding: 0 16rpx;
+}
+
+.reward-name {
+  font-size: 31rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reward-cost {
+  font-size: 25rpx;
+  color: var(--cp-primary);
+  margin-top: 6rpx;
+}
+
+.reward-state { color: var(--cp-text-hint); }
+
+.reward-action { flex-shrink: 0; }
+
+.redeem-btn {
+  min-width: 132rpx;
+  height: 68rpx;
+  border-radius: 34rpx;
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28rpx;
+}
+
+.group-admin {
+  border-top: 1rpx solid var(--cp-surface);
+  padding: 18rpx 0 8rpx;
+}
+
+.group-admin-tip {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+}
+
+/* 家长操作行:跟在每条奖励下方,右对齐 */
+.reward-ops {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12rpx;
+  padding: 0 0 20rpx;
+}
+
+.reward-op {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  background: var(--cp-bg);
+  border-radius: 24rpx;
+  padding: 8rpx 22rpx;
+  line-height: 1.4;
+}
+
+/* 已下架的「上架」用主色高亮,引导家长把它开回来 */
+.reward-op-on {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-weight: 600;
+}
+
+.reward-op-bad {
+  background: var(--cp-danger-soft);
+  color: var(--cp-danger);
+}
+
+/* ============ 兑换记录 ============ */
+
+.record-item + .record-item {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--cp-line);
+}
+
+.record-icon { font-size: 40rpx; }
+
+.record-info { min-width: 0; }
+
+.record-name {
+  font-size: 29rpx;
+  color: var(--cp-text);
+  font-weight: 500;
+}
+
+.record-meta {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 4rpx;
+}
+
+.record-right { text-align: right; flex-shrink: 0; }
+
+.record-cost {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--cp-penalty);
+}
+
+.record-status { margin-top: 6rpx; }
+
+.record-actions { margin-top: 14rpx; text-align: right; }
+
+.record-cancel {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  padding: 8rpx 0;
+}
+
+/* ============ 编辑弹层 ============ */
+
+.field { margin-bottom: 28rpx; }
+
+.field-label {
+  font-size: 27rpx;
+  color: var(--cp-text-sub);
+  margin-bottom: 12rpx;
+}
+
+.field-input {
+  height: 88rpx;
+  background: var(--cp-bg);
+  border-radius: 20rpx;
+  padding: 0 26rpx;
+  font-size: 30rpx;
+  color: var(--cp-text);
+}
+
+.field-hint {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 10rpx;
+}
+
+.tier-row { display: flex; gap: 20rpx; }
+
+.tier-chip {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: var(--cp-bg);
+  color: var(--cp-text-sub);
+  font-size: 29rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tier-chip-on {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-weight: 600;
+  border: 2rpx solid #B9D8FD;
+}
+
+.editor-actions { margin: 8rpx 0 0; }

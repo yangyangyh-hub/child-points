@@ -1,0 +1,9 @@
+{
+  "name": "resetAll",
+  "version": "1.0.0",
+  "description": "清空全部数据并回到初始状态(必须家长密码 + 二次确认,不可逆)",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

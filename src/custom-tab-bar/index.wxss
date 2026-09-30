@@ -1,0 +1,76 @@
+/* 自定义 tabBar —— 图标 + 文字 + 选中指示条
+   原生 tabBar 不能调字号,只能靠图标放大;
+   这里用自定义组件把图标放到 48rpx、文字 24rpx,点击区 126rpx 起。 */
+
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  display: flex;
+  align-items: stretch;
+  height: 112rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #FFFFFF;
+  box-shadow: 0 -4rpx 24rpx rgba(74, 42, 32, 0.08);
+}
+
+.tabbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: rgba(74, 42, 32, 0.06);
+}
+
+.tab {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  padding-top: 10rpx;
+}
+
+/* 选中:图标与文字间的一小段橙色提示条 */
+.tab-ind {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 48rpx;
+  height: 6rpx;
+  margin-left: -24rpx;
+  border-radius: 0 0 6rpx 6rpx;
+  background: var(--cp-primary, #FF7A59);
+  opacity: 0;
+  transform: translateY(-6rpx);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.tab.on .tab-ind {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tab-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.tab-label {
+  font-size: 24rpx;
+  line-height: 1.2;
+  letter-spacing: 0.5rpx;
+  color: var(--cp-tab-off, #A89083);
+  transition: color .18s ease;
+}
+
+.tab.on .tab-label {
+  color: var(--cp-primary, #FF7A59);
+  font-weight: 600;
+}

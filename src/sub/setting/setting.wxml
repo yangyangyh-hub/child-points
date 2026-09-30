@@ -1,0 +1,222 @@
+<!-- 系统设置(原型稿页面7)
+
+     ★ 三组:孩子信息 / 打分规则 / 提醒 / 危险操作
+       危险操作单独放最后一组并且视觉降权 —— 别让它跟"提醒时间"混在一起 -->
+<view class="page">
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:200rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:160rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <!-- ============ 孩子信息 ============ -->
+    <view class="section-title">
+      <text>孩子信息</text>
+      <text class="more">改了会立刻生效</text>
+    </view>
+
+    <view class="card">
+      <view class="avatar-row">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image wx:if="{{avatar}}" src="{{avatar}}" mode="aspectFill" class="avatar-img"/>
+          <view wx:else class="avatar-ph">
+            <text class="avatar-ph-icon">🙂</text>
+            <text class="avatar-ph-text">换头像</text>
+          </view>
+        </button>
+        <view class="avatar-tip">点头像可以从微信头像里选一张</view>
+      </view>
+
+      <view class="field">
+        <view class="field-label">昵称</view>
+        <input
+          class="field-input"
+          placeholder="孩子的小名"
+          maxlength="12"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+        />
+      </view>
+
+      <view class="field">
+        <view class="field-label">年级</view>
+        <picker
+          mode="selector"
+          range="{{gradeOptions}}"
+          value="{{gradeIndex}}"
+          bindchange="onGradeChange"
+        >
+          <view class="picker-box">
+            <text>{{grade || '请选择'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <button class="btn-big btn-primary-bg" bindtap="onSaveBase">保存孩子信息</button>
+    </view>
+
+    <!-- ============ 打分规则 ============ -->
+    <view class="section-title">
+      <text>打分规则</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row-left">
+          <view>
+            <view class="item-name">单日扣分上限</view>
+            <view class="item-sub">一天最多扣这么多分,超过会提示是否突破</view>
+          </view>
+        </view>
+      </view>
+
+      <picker
+        class="mt-16"
+        mode="selector"
+        range="{{limitOptions}}"
+        value="{{penaltyLimit - penaltyLimitMin}}"
+        bindchange="onLimitChange"
+      >
+        <view class="picker-box">
+          <text class="num">{{penaltyLimit}} 分</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+
+      <view class="item-note">
+        可选范围 {{penaltyLimitMin}}–{{penaltyLimitMax}} 分。上限的作用是拦住
+        "情绪上头的时候扣过头",不是不让你扣 —— 到了上限还想扣,会多问一次。
+      </view>
+    </view>
+
+    <!-- ============ 提醒 ============ -->
+    <view class="section-title">
+      <text>打卡提醒</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row-left">
+          <view>
+            <view class="item-name">开启提醒</view>
+            <view class="item-sub">过了提醒时间还没打卡时给你提个醒</view>
+          </view>
+        </view>
+        <switch
+          checked="{{remindEnabled}}"
+          color="var(--cp-primary)"
+          bindchange="onToggleRemind"
+        />
+      </view>
+
+      <block wx:if="{{remindEnabled}}">
+        <view class="divider"></view>
+        <picker mode="time" value="{{remindTime}}" bindchange="onTimeChange">
+          <view class="picker-box">
+            <text class="num">{{remindTime}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </block>
+
+      <view class="item-note">
+        说明:小程序没有办法在后台定点推送消息。所以这条提醒的实际效果是
+        —— 你下次打开小程序时,如果已经过了设定时间而且今天还没打卡,
+        首页会显示一条提示。它不会主动响铃或弹通知。
+      </view>
+    </view>
+
+    <!-- ============ 家长密码 ============ -->
+    <view class="section-title">
+      <text>家长密码</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row-left">
+          <view>
+            <view class="item-name">{{hasPin ? '已设置家长密码' : '还没有家长密码'}}</view>
+            <view class="item-sub">切到家长模式、手动改分、批准兑换都会用到</view>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-big btn-soft-bg mt-24" bindtap="onChangePin">
+        {{hasPin ? '修改家长密码' : '设置家长密码'}}
+      </button>
+
+      <view wx:if="{{hasPin}}" class="item-note" style="text-align:center;" bindtap="onForgotPin">
+        忘记密码了？点这里看怎么重置
+      </view>
+    </view>
+
+    <!-- ============ 危险操作 ============ -->
+    <view class="section-title">
+      <text>数据操作</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row-left">
+          <view>
+            <view class="item-name">重置今日记录</view>
+            <view class="item-sub">{{resetDateText}} · 清空打卡和加减分,积分退回</view>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-big btn-danger-bg mt-24" bindtap="onResetToday">重置今天的记录</button>
+      <view class="item-note">
+        什么时候用:今天不小心点错了很多次,或者想重新开始一天。
+        重置会把当天所有记录删掉,并把当天加的分、扣的分全部还原。
+        需要家长密码。历史其他日子的数据不受影响。
+      </view>
+    </view>
+
+    <!-- ============ 清空全部(不可逆,单独一组并放在最后) ============ -->
+    <view class="section-title">
+      <text>恢复初始状态</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row-left">
+          <view>
+            <view class="item-name">清空所有数据</view>
+            <view class="item-sub">删掉孩子资料和全部记录,回到刚装好的状态</view>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-big btn-danger-bg mt-24" bindtap="onResetAll">清空所有数据</button>
+      <view class="item-note">
+        会删掉:孩子资料、打卡记录、积分流水、奖励兑换、勋章、成长日志、成绩记录、
+        获得荣誉,以及云存储里的头像和荣誉照片。
+        删完之后找不回来,需要家长密码。
+      </view>
+    </view>
+
+    <view class="pb-safe"></view>
+  </block>
+
+</view>

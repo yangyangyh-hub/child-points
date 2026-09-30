@@ -1,0 +1,9 @@
+{
+  "name": "initChild",
+  "version": "1.0.0",
+  "description": "创建或更新孩子资料,首次播种预设行为规则与奖励",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

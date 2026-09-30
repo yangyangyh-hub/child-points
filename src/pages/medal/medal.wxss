@@ -1,0 +1,532 @@
+/* 勋章页样式(原型稿页面4)
+
+   设计要点:
+     1) 已获得用金色系 + 实心,进行中用蓝色系 + 进度条 —— 两态视觉差异明显
+     2) 勋章不画成黑影占位,列表里直接给图标(降饱和即可)
+        —— 孩子看不到图标就没有"想拿到它"的动机 */
+
+.page {
+  padding-top: 24rpx;
+  /* 自定义 tabBar 是 fixed 定位、不占布局流 ⇒ 留出高度 + 安全区,否则列表末尾被盖住 */
+  padding-bottom: calc(136rpx + env(safe-area-inset-bottom));
+}
+
+/* ============ 总览 ============ */
+
+.hero-card {
+  background: linear-gradient(135deg, #FFE9B8 0%, #FFD98A 100%);
+  box-shadow: 0 8rpx 32rpx rgba(240, 169, 58, 0.24);
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-label {
+  font-size: 26rpx;
+  color: #8A6A22;
+}
+
+.hero-value {
+  font-size: 68rpx;
+  font-weight: 700;
+  color: #7A5A10;
+  line-height: 1.15;
+  margin-top: 4rpx;
+}
+
+.hero-total {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #A88840;
+}
+
+.hero-badge {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 56rpx;
+  background: rgba(255, 255, 255, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-badge-num {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #7A5A10;
+}
+
+.progress-track {
+  height: 16rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.62);
+  margin-top: 26rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #F5B740 0%, #E89A18 100%);
+  transition: width 0.4s ease;
+}
+
+.hero-streak {
+  font-size: 26rpx;
+  color: #8A6A22;
+  margin-top: 22rpx;
+}
+
+.hero-note {
+  font-size: 22rpx;
+  color: #A88840;
+  margin-top: 6rpx;
+}
+
+/* ============ 已获得网格 ============ */
+
+.medal-grid-card { padding: 20rpx 16rpx; }
+
+.medal-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.medal-cell {
+  width: 25%;
+  box-sizing: border-box;
+  padding: 20rpx 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.medal-icon {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 54rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  background: #FFF6E0;
+  border: 4rpx solid #F7CE70;
+}
+
+.medal-name {
+  font-size: 22rpx;
+  color: #7A5A10;
+  margin-top: 12rpx;
+  text-align: center;
+  line-height: 1.35;
+}
+
+/* ============ 进行中 ============ */
+
+.lock-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8rpx 0;
+}
+
+.lock-item + .lock-item {
+  margin-top: 26rpx;
+  padding-top: 26rpx;
+  border-top: 1rpx solid var(--cp-surface);
+}
+
+.lock-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: var(--cp-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42rpx;
+  flex-shrink: 0;
+  /* 未解锁降低饱和但保留可辨识度 */
+  filter: grayscale(0.55);
+  opacity: 0.85;
+}
+
+.lock-body {
+  flex: 1;
+  min-width: 0;
+  padding-left: 20rpx;
+}
+
+.lock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lock-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+.lock-progress {
+  font-size: 23rpx;
+  color: var(--cp-primary);
+  flex-shrink: 0;
+  padding-left: 12rpx;
+}
+
+.lock-bar {
+  height: 14rpx;
+  border-radius: 7rpx;
+  background: var(--cp-line);
+  margin-top: 14rpx;
+  overflow: hidden;
+}
+
+.lock-bar-fill {
+  height: 100%;
+  border-radius: 7rpx;
+  background: linear-gradient(90deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  transition: width 0.4s ease;
+}
+
+.lock-desc {
+  font-size: 23rpx;
+  color: var(--cp-text-sub);
+  margin-top: 10rpx;
+}
+
+/* ============ 详情弹层 ============ */
+
+.detail-icon {
+  font-size: 110rpx;
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 24rpx;
+}
+
+.detail-progress { margin-top: 8rpx; }
+
+.detail-progress-text {
+  font-size: 28rpx;
+  color: var(--cp-primary);
+  text-align: center;
+  margin-bottom: 18rpx;
+}
+
+.detail-bar {
+  height: 20rpx;
+  border-radius: 10rpx;
+  background: var(--cp-line);
+  overflow: hidden;
+}
+
+.detail-bar-fill {
+  height: 100%;
+  border-radius: 10rpx;
+  background: linear-gradient(90deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+}
+
+.detail-unlocked {
+  text-align: center;
+  font-size: 29rpx;
+  color: var(--cp-warn-deep);
+  background: var(--cp-warn-soft);
+  border-radius: 20rpx;
+  padding: 26rpx;
+}
+
+/* ==========================================================
+   2026-09-24 新增：顶部标签 + 成绩记录 + 荣誉墙 + 录入表单
+   ★ 配色继续用现有的语义色(var(--cp-primary) 主色等)，不在这里引入新色 ——
+     用户已决定先不做整体 UI 改版；将来要换成暖橙色时，改 app.wxss
+     和这里引用的语义变量即可一次生效。
+   ========================================================== */
+
+/* ---------- 顶部标签条 ---------- */
+
+.seg-bar {
+  display: flex;
+  gap: 12rpx;
+  margin: 0 24rpx 24rpx;
+  padding: 8rpx;
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  box-shadow: 0 4rpx 24rpx rgba(255, 122, 89, 0.16);
+}
+
+.seg {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  font-size: 27rpx;
+  color: var(--cp-text-sub);
+  border-radius: 26rpx;
+  /* ★ 不给宽度留死：三个标签字数不一样，用 flex 平分，换行也不至于挤出去 */
+  white-space: nowrap;
+}
+
+.seg-on {
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 成绩记录列表 ---------- */
+
+.ach-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 22rpx 0;
+}
+
+.ach-item + .ach-item { border-top: 1rpx solid var(--cp-line); }
+
+.ach-left { flex: 1; min-width: 0; }
+
+.ach-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+.ach-score {
+  margin-left: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--cp-primary);
+}
+
+.ach-level {
+  display: inline-block;
+  margin-left: 12rpx;
+  padding: 0 14rpx;
+  height: 38rpx;
+  line-height: 38rpx;
+  border-radius: 19rpx;
+  font-size: 23rpx;
+  background: var(--cp-bonus-soft);
+  color: var(--cp-bonus-deep);
+}
+
+.ach-sub {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+}
+
+.ach-ops {
+  display: flex;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.ach-op {
+  min-width: 60rpx;
+  height: 52rpx;
+  line-height: 52rpx;
+  text-align: center;
+  padding: 0 14rpx;
+  border-radius: 26rpx;
+  font-size: 24rpx;
+  background: var(--cp-surface);
+  color: var(--cp-text-sub);
+}
+
+/* 删除刻意不做成大红色块 —— 避免误触的视觉吸引(沿用项目既有取舍) */
+.ach-op-del {
+  background: var(--cp-danger-soft);
+  color: var(--cp-danger);
+}
+
+/* ---------- 荣誉墙 ---------- */
+
+.honor-wall {
+  margin: 0 24rpx 24rpx;
+}
+
+.honor-card {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 24rpx;
+}
+
+.honor-photo {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+  background: var(--cp-surface);
+}
+
+/* 没照片时用一个奖杯占位，不留空白 */
+.honor-empty-photo {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+  background: var(--cp-warn-soft);
+  font-size: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.honor-body { flex: 1; min-width: 0; }
+
+.honor-title {
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--cp-text);
+}
+
+.honor-sub {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+}
+
+.honor-note {
+  margin-top: 8rpx;
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+}
+
+.honor-ops {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+/* ---------- 录入表单 ---------- */
+
+/* ★ 表单区单独滚动：字段多的时候弹层不会顶出屏幕，
+   也不会把「取消/保存」按钮挤到看不见(这两个按钮必须在 sheet 外层) */
+.sheet-body {
+  max-height: 56vh;
+  margin: 0 -8rpx;
+  padding: 0 8rpx;
+}
+
+.field {
+  padding: 18rpx 0 6rpx;
+  border-bottom: 1rpx solid var(--cp-surface);
+}
+
+.field-label {
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+  margin-bottom: 12rpx;
+}
+
+.field-input {
+  height: 88rpx;
+  font-size: 30rpx;
+  color: var(--cp-text);
+  background: #F6F8FB;
+  border: 2rpx solid #E3EAF3;
+  border-radius: 20rpx;
+  padding: 0 22rpx;
+  box-sizing: border-box;
+}
+
+.field-value {
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 30rpx;
+  color: var(--cp-text);
+  background: #F6F8FB;
+  border: 2rpx solid #E3EAF3;
+  border-radius: 20rpx;
+  padding: 0 22rpx;
+}
+
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.field-input-sm { width: 200rpx; text-align: center; }
+
+.field-sep { color: var(--cp-text-sub); font-size: 30rpx; }
+
+.field-tip {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  color: var(--cp-text-hint);
+}
+
+/* 二选一/多选一的胶囊（分数-等级、优秀-良好…） */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.chip {
+  min-width: 96rpx;
+  height: 66rpx;
+  line-height: 66rpx;
+  text-align: center;
+  padding: 0 20rpx;
+  border-radius: 33rpx;
+  font-size: 27rpx;
+  background: var(--cp-surface);
+  color: var(--cp-text-sub);
+  box-sizing: border-box;
+}
+
+.chip-on {
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  border: 2rpx solid var(--cp-primary);
+  font-weight: 600;
+}
+
+/* 照片选择 */
+.photo-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.photo-thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 20rpx;
+  background: var(--cp-surface);
+}
+
+.photo-pick {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 20rpx;
+  border: 2rpx dashed #D8E2EE;
+  background: #F6F8FB;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-plus {
+  font-size: 52rpx;
+  color: var(--cp-text-hint);
+  line-height: 1;
+}
+
+.photo-tip {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+}

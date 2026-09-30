@@ -1,0 +1,628 @@
+/* 首页样式 —— 卡通柔和、大按钮、大数字 */
+
+.page {
+  padding-top: 20rpx;
+  /* 自定义 tabBar 是 fixed 定位、不占布局流 ⇒ 末尾内容会被盖住,这里留出高度 + 安全区 */
+  padding-bottom: calc(136rpx + env(safe-area-inset-bottom));
+}
+
+/* ============ 顶部栏 ============ */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx 24rpx;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  min-width: 0;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50rpx;
+  background: linear-gradient(135deg, #A8D4FF 0%, var(--cp-primary-light) 100%);
+  color: #FFFFFF;
+  font-size: 42rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6rpx 18rpx rgba(255, 122, 89, 0.35);
+  overflow: hidden;
+}
+
+/* 家长模式下头像换暖色,一眼知道"现在是家长视角" */
+.avatar-parent {
+  background: linear-gradient(135deg, #FFC9A8 0%, #FF9C7A 100%);
+  box-shadow: 0 6rpx 18rpx rgba(255, 156, 122, 0.35);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.topbar-info { min-width: 0; }
+
+.nickname {
+  font-size: 38rpx;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.topbar-sub {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+  margin-top: 4rpx;
+}
+
+.topbar-sub .dot { margin: 0 8rpx; }
+
+.mode-btn {
+  flex-shrink: 0;
+  height: 60rpx;
+  padding: 0 24rpx;
+  border-radius: 30rpx;
+  background: var(--cp-primary-soft);
+  color: var(--cp-primary);
+  font-size: 25rpx;
+  display: flex;
+  align-items: center;
+}
+
+.mode-btn-parent {
+  background: #FFF3EE;
+  color: var(--cp-danger);
+}
+
+/* ============ 核心数据卡 ============ */
+
+.hero-card {
+  background: linear-gradient(160deg, #FFFFFF 0%, #F7FBFF 100%);
+  padding: 36rpx 32rpx;
+}
+
+.points-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.points-main { flex: 1; min-width: 0; }
+
+.points-label {
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+}
+
+.points-value {
+  font-size: 88rpx;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--cp-text);
+  letter-spacing: -2rpx;
+}
+
+.points-hint {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 2rpx;
+}
+
+.points-side {
+  text-align: right;
+  padding-bottom: 8rpx;
+}
+
+.points-side-label {
+  font-size: 23rpx;
+  color: var(--cp-text-sub);
+}
+
+.points-side-value {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: var(--cp-warn);
+  line-height: 1.2;
+}
+
+/* ============ 今日得分 ============ */
+
+.today-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.today-item {
+  flex: 1;
+  text-align: center;
+}
+
+.today-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.today-label {
+  font-size: 22rpx;
+  color: var(--cp-text-sub);
+  margin-top: 4rpx;
+}
+
+.streak-note {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  text-align: center;
+  margin-top: 12rpx;
+}
+
+/* ============ 扣分上限 ============ */
+
+.limit-box {
+  margin-top: 24rpx;
+  padding: 20rpx 24rpx;
+  background: #FFF9F7;
+  border-radius: 20rpx;
+}
+
+.limit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 23rpx;
+  color: var(--cp-text-sub);
+  margin-bottom: 12rpx;
+}
+
+.limit-track {
+  height: 12rpx;
+  background: #FFE8E2;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.limit-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFB4A2 0%, var(--cp-penalty) 100%);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+/* ============ 三大按钮 ============ */
+
+.hero-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 32rpx;
+}
+
+.hero-btn {
+  flex: 1;
+  height: 108rpx;
+  border-radius: 26rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  gap: 2rpx;
+}
+
+.hero-btn-icon {
+  font-size: 34rpx;
+  line-height: 1.1;
+}
+
+.hero-btn-b {
+  background: linear-gradient(150deg, var(--cp-primary-soft) 0%, #D6E8FF 100%);
+  color: var(--cp-primary);
+}
+
+.hero-btn-p {
+  background: linear-gradient(150deg, #FFF0EC 0%, #FFDDD4 100%);
+  color: var(--cp-danger);
+}
+
+.hero-btn-s {
+  background: linear-gradient(150deg, #F2F0FF 0%, #E5E1FF 100%);
+  color: #7466E0;
+}
+
+/* ============ 日期横排 ============ */
+
+.datestrip {
+  margin: 0 24rpx 28rpx;
+}
+
+.datestrip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8rpx 16rpx;
+}
+
+.datestrip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+.back-today {
+  font-size: 23rpx;
+  color: var(--cp-primary);
+  padding: 4rpx 16rpx;
+  background: var(--cp-primary-soft);
+  border-radius: 20rpx;
+}
+
+.datestrip-list {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.date-arrow {
+  width: 44rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cp-text-hint);
+  font-size: 38rpx;
+  flex-shrink: 0;
+}
+
+.date-arrow-off { opacity: 0.25; }
+
+.date-cell {
+  flex: 1;
+  height: 108rpx;
+  border-radius: 22rpx;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.date-week {
+  font-size: 20rpx;
+  color: var(--cp-text-hint);
+}
+
+.date-day {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--cp-text-sub);
+  line-height: 1.2;
+}
+
+.date-cell-weekend .date-week { color: #E0A9A0; }
+
+.date-cell-today {
+  box-shadow: inset 0 0 0 2rpx #A8D4FF;
+}
+
+.date-cell-active {
+  background: linear-gradient(150deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  box-shadow: 0 6rpx 20rpx rgba(255, 122, 89, 0.32);
+}
+
+.date-cell-active .date-week,
+.date-cell-active .date-day {
+  color: #FFFFFF;
+}
+
+.date-dot {
+  position: absolute;
+  bottom: 10rpx;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 4rpx;
+  background: #FFB4A2;
+}
+
+.date-cell-active .date-dot { background: #FFFFFF; }
+
+/* ============ 任务项 ============ */
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 24rpx 8rpx;
+  border-bottom: 1rpx solid var(--cp-surface);
+}
+
+.task-item:last-child { border-bottom: none; }
+
+.task-check {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  border: 3rpx solid #DCE5EE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+/* 加分项选中:天蓝 */
+.check-b {
+  background: linear-gradient(135deg, #A8D4FF 0%, var(--cp-primary) 100%);
+  border-color: var(--cp-primary);
+}
+
+/* 扣分项选中:暖橘(不用大红 —— 不制造惩罚感) */
+.check-p {
+  background: linear-gradient(135deg, #FFC4B4 0%, var(--cp-penalty) 100%);
+  border-color: var(--cp-penalty);
+}
+
+.task-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-name {
+  font-size: 30rpx;
+  color: var(--cp-text);
+  line-height: 1.35;
+}
+
+.task-done .task-name {
+  color: var(--cp-text-hint);
+  text-decoration: line-through;
+}
+
+.task-meta { margin-top: 6rpx; }
+
+.task-score {
+  font-size: 34rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.expand-btn {
+  text-align: center;
+  font-size: 25rpx;
+  color: var(--cp-text-sub);
+  padding: 22rpx 0 6rpx;
+}
+
+/* ============ 补救入口 ============ */
+
+.makeup-entry {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-top: 20rpx;
+  padding: 22rpx 24rpx;
+  background: #F2FAF6;
+  border-radius: 20rpx;
+}
+
+.makeup-icon { font-size: 36rpx; }
+
+.makeup-text { flex: 1; }
+
+.makeup-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2E8B62;
+}
+
+.makeup-sub {
+  font-size: 22rpx;
+  color: #8FBCA6;
+  margin-top: 2rpx;
+}
+
+.makeup-arrow {
+  color: #C6D2DC;
+  font-size: 36rpx;
+}
+
+.makeup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 20rpx;
+  border-radius: 20rpx;
+  background: #F7FAFD;
+  margin-bottom: 14rpx;
+  font-size: 30rpx;
+}
+
+.makeup-item-icon {
+  font-size: 32rpx;
+  margin-right: 14rpx;
+}
+
+/* ============ 孩子模式的安抚条 ============ */
+
+.child-cheer {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: linear-gradient(150deg, #FFFCF2 0%, #FFF7E4 100%);
+  padding: 30rpx 32rpx;
+}
+
+.cheer-icon { font-size: 44rpx; }
+
+.cheer-text {
+  font-size: 28rpx;
+  color: #B08A3E;
+  font-weight: 600;
+}
+
+/* ============ 勋章入口 ============ */
+
+.medal-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(150deg, #FFFCF2 0%, #FFF4DC 100%);
+}
+
+.medal-entry-icon {
+  font-size: 44rpx;
+  margin-right: 6rpx;
+}
+
+/* ============ 日志 ============ */
+
+.log-line {
+  padding: 20rpx 8rpx;
+  border-bottom: 1rpx solid var(--cp-surface);
+}
+
+.log-line:last-of-type { border-bottom: none; }
+
+.log-date {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+}
+
+.log-text {
+  font-size: 27rpx;
+  color: #4A5A6A;
+  margin-top: 8rpx;
+  line-height: 1.55;
+}
+
+.log-add {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--cp-primary);
+  padding: 24rpx 0 8rpx;
+}
+
+/* ============ 手动加扣分弹层 ============ */
+
+.adjust-input-row {
+  display: flex;
+  /* ★ 原来是 align-items: baseline —— 88rpx 的数字与 32rpx 的"分"按基线对齐后
+     整行高度算不准,数字容易被裁掉半边(2026-09-23 改成 center) */
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 8rpx 0 24rpx;
+}
+
+/* ★ 分值输入区改成"看得见的框"(2026-09-23)
+   两个问题一起修的:
+     ① 原来是无框大数字,用户看不出这里可以点,以为"分值被挡住了";
+     ② 原来带 focus="{{adjustVisible}}" 自动聚焦 —— 弹层一出现就弹出软键盘,
+        在手机上会把快捷分值、备注框、确定按钮一起顶上去挡住。
+   现在:显式高度 + 浅底圆角框,点一下才弹键盘。 */
+.adjust-input {
+  width: 240rpx;
+  height: 132rpx;
+  box-sizing: border-box;
+  padding: 0 16rpx;
+  font-size: 72rpx;
+  font-weight: 800;
+  text-align: center;
+  color: var(--cp-text);
+  background: #F6F8FB;
+  border: 2rpx solid #E3EAF3;
+  border-radius: 24rpx;
+}
+
+.adjust-unit {
+  font-size: 32rpx;
+  color: var(--cp-text-sub);
+}
+
+.quick-row {
+  display: flex;
+  gap: 16rpx;
+  justify-content: center;
+  margin-bottom: 26rpx;
+}
+
+.quick-chip {
+  width: 88rpx;
+  height: 66rpx;
+  border-radius: 33rpx;
+  background: #F0F5FB;
+  color: var(--cp-text-sub);
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adjust-note {
+  background: #F5F8FC;
+  border-radius: 20rpx;
+  padding: 24rpx 26rpx;
+  font-size: 28rpx;
+}
+
+.log-input {
+  width: 100%;
+  min-height: 200rpx;
+  background: #F5F8FC;
+  border-radius: 20rpx;
+  padding: 26rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+/* ============ 勋章解锁提示 ============ */
+
+.medal-toast {
+  position: fixed;
+  left: 50%;
+  top: 140rpx;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFF6E0 0%, #FFE9B8 100%);
+  border-radius: 26rpx;
+  padding: 24rpx 36rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  box-shadow: 0 10rpx 40rpx rgba(240, 169, 58, 0.35);
+  z-index: 1000;
+  animation: medal-in 0.4s ease;
+}
+
+@keyframes medal-in {
+  from { opacity: 0; transform: translate(-50%, -24rpx); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.medal-toast-icon { font-size: 52rpx; }
+
+.medal-toast-title {
+  font-size: 22rpx;
+  color: var(--cp-warn-deep);
+}
+
+.medal-toast-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #8A5E14;
+}
+
+.footer-space { height: 40rpx; }

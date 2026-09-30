@@ -1,0 +1,17 @@
+<!-- 自定义 tabBar —— index 由各页面 onShow 里 getTabBar().setTab(index) 设定 -->
+<view class="tabbar">
+
+  <view
+    wx:for="{{tabs}}"
+    wx:key="index"
+    class="tab {{index === selected ? 'on' : ''}}"
+    data-index="{{index}}"
+    data-path="{{item.pagePath}}"
+    bindtap="onTap"
+  >
+    <view class="tab-ind"></view>
+    <image class="tab-icon" src="{{index === selected ? item.iconOn : item.icon}}" mode="aspectFit"></image>
+    <text class="tab-label">{{item.text}}</text>
+  </view>
+
+</view>

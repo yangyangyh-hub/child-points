@@ -1,0 +1,264 @@
+<!-- 奖励兑换商城(原型稿页面3)
+
+     ★ 三步结构:钱包 → 奖励(按档位分组) → 兑换记录
+     ★ 家长模式额外挂出「待确认」置顶区,让孩子提交的申请能被看见
+     ★ 兑换是两步式:孩子「申请」→ 家长「批准」才扣分。按钮文案如实说明
+       这一点,避免孩子以为点了就到手 -->
+
+<view class="page">
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card wallet-card">
+      <view class="skeleton" style="width:200rpx;height:32rpx;"></view>
+      <view class="skeleton" style="width:280rpx;height:72rpx;margin-top:20rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:150rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:150rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">下拉页面也能重试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <block wx:else>
+
+    <!-- ============ 钱包 ============ -->
+    <view class="card wallet-card">
+      <view class="wallet-main">
+        <view class="wallet-label">可用积分</view>
+        <view class="wallet-value num">{{availablePoints}}</view>
+      </view>
+      <view class="wallet-side">
+        <view class="wallet-side-label">累计总积分</view>
+        <view class="wallet-side-value num">{{lifetimePoints}}</view>
+        <view class="wallet-side-hint">不因兑换减少</view>
+      </view>
+    </view>
+
+    <!-- ============ 家长:待确认列表 ============ -->
+    <block wx:if="{{isParent && pendingCount > 0}}">
+      <view class="section-title">
+        <text>待家长确认</text>
+        <text class="more">{{pendingCount}} 条</text>
+      </view>
+      <view class="card pending-card">
+        <view class="pending-item" wx:for="{{records}}" wx:key="_id" wx:if="{{item.isPending}}">
+          <view class="row">
+            <view class="row-left">
+              <text class="pending-icon">{{item.icon || '🎁'}}</text>
+              <view class="pending-info">
+                <view class="pending-name">{{item.rewardName}}</view>
+                <view class="pending-meta">
+                  <text class="num">{{item.cost}}</text>
+                  <text> 分 · {{item.timeText}}</text>
+                </view>
+              </view>
+            </view>
+            <text class="tag tag-warn">{{item.statusLabel}}</text>
+          </view>
+          <view class="btn-row pending-actions">
+            <button class="btn-big btn-soft-bg btn-sm" data-id="{{item._id}}" bindtap="onTapReject">驳回</button>
+            <button class="btn-big btn-primary-bg btn-sm" data-id="{{item._id}}" bindtap="onTapApprove">批准兑换</button>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 奖励列表 ============ -->
+    <block wx:if="{{rewardCount > 0}}">
+      <block wx:for="{{groups}}" wx:key="key" wx:for-item="group">
+
+        <view class="section-title">
+          <text>{{group.label}}</text>
+          <text class="more" wx:if="{{group.hint}}">{{group.hint}}</text>
+        </view>
+
+        <view class="card group-card">
+          <view
+            class="reward-item {{item.affordable && !item.soldOut && item.active ? '' : 'reward-item-off'}}"
+            wx:for="{{group.list}}"
+            wx:key="_id"
+            wx:for-item="item"
+            data-id="{{item._id}}"
+            bindtap="onTapReward"
+          >
+            <view class="reward-icon">{{item.icon}}</view>
+            <view class="reward-body">
+              <view class="reward-name">{{item.name}}</view>
+              <view class="reward-cost">
+                <text class="num">{{item.cost}}</text>
+                <text> 积分</text>
+                <text wx:if="{{item.stateText}}" class="reward-state"> · {{item.stateText}}</text>
+                <text wx:elif="{{!item.unlimited}}" class="reward-state"> · 剩 {{item.stock}} 份</text>
+              </view>
+            </view>
+            <view class="reward-action">
+              <view wx:if="{{item.soldOut}}" class="tag">已兑完</view>
+              <view wx:elif="{{!item.active}}" class="tag">已下架</view>
+              <view wx:elif="{{item.affordable}}" class="redeem-btn">兑换</view>
+              <view wx:else class="tag tag-warn">还差 {{item.gap}}</view>
+            </view>
+          </view>
+
+          <!-- 家长维护:改 / 上架下架 / 删。孩子看不到这一行 -->
+          <view class="reward-ops" wx:if="{{isParent}}">
+            <text class="reward-op" data-id="{{item._id}}" bindtap="onOpenEdit">改</text>
+            <text
+              class="reward-op {{item.active ? '' : 'reward-op-on'}}"
+              data-id="{{item._id}}"
+              bindtap="onToggleRewardActive"
+            >{{item.active ? '下架' : '上架'}}</text>
+            <text
+              wx:if="{{!item.preset}}"
+              class="reward-op reward-op-bad"
+              data-id="{{item._id}}"
+              bindtap="onDeleteReward"
+            >删</text>
+          </view>
+        </view>
+
+      </block>
+    </block>
+
+    <!-- ============ 还没有奖励 ============ -->
+    <view class="card" wx:else>
+      <view class="empty">
+        <view class="empty-icon">🎁</view>
+        <view>还没有可以兑换的奖励</view>
+        <view class="empty-tip">
+          {{isParent ? '点下面的按钮添加一个吧' : '请家长先添加奖励哦'}}
+        </view>
+      </view>
+      <button wx:if="{{isParent}}" class="btn-big btn-primary-bg" bindtap="onOpenCreate">添加奖励</button>
+    </view>
+
+    <!-- ============ 家长:添加奖励 ============ -->
+    <block wx:if="{{isParent}}">
+      <view class="btn-row">
+        <button class="btn-big btn-soft-bg" bindtap="onOpenCreate">＋ 添加奖励</button>
+      </view>
+    </block>
+
+    <!-- ============ 兑换记录 ============ -->
+    <view class="section-title">
+      <text>兑换记录</text>
+      <text class="more" wx:if="{{hiddenRecordCount > 0}}" bindtap="onToggleRecords">
+        {{recordsExpanded ? '收起' : ('展开其余 ' + hiddenRecordCount + ' 条')}}
+      </text>
+    </view>
+
+    <view class="card" wx:if="{{visibleRecords.length > 0}}">
+      <view class="record-item" wx:for="{{visibleRecords}}" wx:key="_id">
+        <view class="row">
+          <view class="row-left">
+            <text class="record-icon">{{item.icon || '🎁'}}</text>
+            <view class="record-info">
+              <view class="record-name">{{item.rewardName}}</view>
+              <view class="record-meta">{{item.timeText}}</view>
+            </view>
+          </view>
+          <view class="record-right">
+            <view class="record-cost num">-{{item.cost}}</view>
+            <view class="record-status">
+              <text wx:if="{{item.status === 'pending'}}" class="tag tag-warn">{{item.statusLabel}}</text>
+              <text wx:elif="{{item.status === 'approved'}}" class="tag tag-ok">{{item.statusLabel}}</text>
+              <text wx:else class="tag">{{item.statusLabel}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 孩子可以撤回自己还没被处理的申请 -->
+        <view class="record-actions" wx:if="{{item.isPending && !isParent}}">
+          <text class="record-cancel" data-id="{{item._id}}" bindtap="onTapCancel">撤回申请</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:else>
+      <view class="empty">
+        <view class="empty-icon">🧾</view>
+        <view>还没有兑换过奖励</view>
+        <view class="empty-tip">攒够积分就能换啦</view>
+      </view>
+    </view>
+
+    <view class="pb-safe"></view>
+  </block>
+
+  <!-- ============ 家长:奖励编辑弹层 ============ -->
+  <view class="mask" wx:if="{{editorVisible}}" bindtap="onCloseEditor">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">{{editorMode === 'create' ? '添加奖励' : '修改奖励'}}</view>
+      <view class="sheet-sub">孩子会用可用积分来兑换它</view>
+
+      <view class="field">
+        <view class="field-label">奖励名称</view>
+        <input
+          class="field-input"
+          placeholder="例如:多看20分钟动画"
+          maxlength="16"
+          value="{{formName}}"
+          bindinput="onFormName"
+        />
+      </view>
+
+      <view class="field">
+        <view class="field-label">所需积分</view>
+        <input
+          class="field-input"
+          type="number"
+          placeholder="例如:20"
+          value="{{formCost}}"
+          bindinput="onFormCost"
+        />
+      </view>
+
+      <view class="field">
+        <view class="field-label">奖励档位</view>
+        <view class="tier-row">
+          <view
+            class="tier-chip {{formTier === 'small' ? 'tier-chip-on' : ''}}"
+            data-key="small"
+            bindtap="onPickTier"
+          >小额即时</view>
+          <view
+            class="tier-chip {{formTier === 'large' ? 'tier-chip-on' : ''}}"
+            data-key="large"
+            bindtap="onPickTier"
+          >大额长期</view>
+        </view>
+      </view>
+
+      <view class="field">
+        <view class="field-label">可兑换次数</view>
+        <input
+          class="field-input"
+          type="number"
+          placeholder="留空表示不限次数"
+          value="{{formStock}}"
+          bindinput="onFormStock"
+        />
+        <view class="field-hint">留空 = 不限量;填 0 = 暂不可兑</view>
+      </view>
+
+      <view class="btn-row editor-actions">
+        <button class="btn-big btn-ghost-bg" bindtap="onCloseEditor">取消</button>
+        <button class="btn-big btn-primary-bg" bindtap="onSaveReward">保存</button>
+      </view>
+    </view>
+  </view>
+
+</view>

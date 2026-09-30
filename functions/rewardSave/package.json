@@ -1,0 +1,9 @@
+{
+  "name": "rewardSave",
+  "version": "1.0.0",
+  "description": "奖励的新增/修改/上下架,含库存与分档",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/reward/reward",
+    "pages/medal/medal",
+    "pages/mine/mine",
+    "pages/pin/pin"
+  ],
+  "subpackages": [
+    {
+      "root": "sub",
+      "name": "sub",
+      "pages": [
+        "rules/rules",
+        "stats/stats",
+        "log/log",
+        "setting/setting"
+      ]
+    }
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF7A59",
+    "navigationBarTitleText": "宝贝成长积分打卡",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF6EF"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#A89083",
+    "selectedColor": "#FF7A59",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "打卡",
+        "iconPath": "assets/tab/check.png",
+        "selectedIconPath": "assets/tab/check_on.png"
+      },
+      {
+        "pagePath": "pages/reward/reward",
+        "text": "奖励",
+        "iconPath": "assets/tab/gift.png",
+        "selectedIconPath": "assets/tab/gift_on.png"
+      },
+      {
+        "pagePath": "pages/medal/medal",
+        "text": "勋章",
+        "iconPath": "assets/tab/medal.png",
+        "selectedIconPath": "assets/tab/medal_on.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/tab/mine.png",
+        "selectedIconPath": "assets/tab/mine_on.png"
+      }
+    ]
+  },
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["sub"]
+    },
+    "pages/mine/mine": {
+      "network": "all",
+      "packages": ["sub"]
+    }
+  },
+  "style": "v2",
+  "__usePrivacyCheck__": false,
+  "sitemapLocation": "sitemap.json"
+}

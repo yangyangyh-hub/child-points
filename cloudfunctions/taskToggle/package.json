@@ -1,0 +1,9 @@
+{
+  "name": "taskToggle",
+  "version": "1.0.0",
+  "description": "勾选/取消勾选打卡任务;单日扣分上限校验;原子更新打卡、流水、双积分",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

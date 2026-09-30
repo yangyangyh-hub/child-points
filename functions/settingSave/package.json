@@ -1,0 +1,9 @@
+{
+  "name": "settingSave",
+  "version": "1.0.0",
+  "description": "系统设置:孩子资料/扣分上限/打卡提醒/重置今日数据",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

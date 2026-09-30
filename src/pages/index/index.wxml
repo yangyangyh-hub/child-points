@@ -1,0 +1,402 @@
+<!-- 首页(打卡主页)—— 原型稿页面1 -->
+
+<view class="page">
+
+  <!-- ============ 加载骨架 ============ -->
+  <block wx:if="{{loading}}">
+    <view class="card hero-card">
+      <view class="skeleton" style="width:120rpx;height:120rpx;border-radius:60rpx;"></view>
+      <view class="skeleton" style="width:240rpx;height:36rpx;margin-top:24rpx;"></view>
+      <view class="skeleton" style="width:100%;height:180rpx;margin-top:32rpx;"></view>
+    </view>
+    <view class="card">
+      <view class="skeleton" style="width:100%;height:120rpx;"></view>
+    </view>
+  </block>
+
+  <!-- ============ 加载失败 ============ -->
+  <block wx:elif="{{error}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">☁️</view>
+        <view>{{error}}</view>
+        <view class="empty-tip">检查一下网络,或者稍后再试</view>
+      </view>
+      <button class="btn-big btn-soft-bg" bindtap="onRetry">重新加载</button>
+    </view>
+  </block>
+
+  <!-- ============ 首次使用引导 ============ -->
+  <block wx:elif="{{!child}}">
+    <view class="card">
+      <view class="empty">
+        <view class="empty-icon">🌱</view>
+        <view class="strong" style="font-size:34rpx;color:var(--cp-text);">欢迎使用宝贝成长积分打卡</view>
+        <view class="empty-tip">先填一下孩子的昵称和年级,就可以开始了</view>
+      </view>
+      <button class="btn-big btn-primary-bg" bindtap="onCreateChild">开始设置</button>
+    </view>
+  </block>
+
+  <!-- ============ 正常内容 ============ -->
+  <block wx:else>
+
+    <!-- ---------- 顶部:头像 + 昵称 + 模式切换 ---------- -->
+    <view class="topbar">
+      <view class="topbar-left">
+        <view class="avatar {{mode === 'parent' ? 'avatar-parent' : ''}}">
+          <image wx:if="{{child.avatar}}" src="{{child.avatar}}" mode="aspectFill" class="avatar-img"/>
+          <text wx:else>{{initial}}</text>
+        </view>
+        <view class="topbar-info">
+          <view class="nickname">{{child.nickname}}</view>
+          <view class="topbar-sub">
+            <text wx:if="{{grade}}">{{grade}}</text>
+            <text wx:if="{{grade}}" class="dot">·</text>
+            <text>{{mode === 'parent' ? '家长模式' : '孩子模式'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="mode-btn {{mode === 'parent' ? 'mode-btn-parent' : ''}}" bindtap="onSwitchMode">
+        {{mode === 'parent' ? '切到孩子' : '切到家长'}}
+      </view>
+    </view>
+
+    <!-- ---------- 核心数据大卡 ---------- -->
+    <view class="card hero-card">
+      <!-- 双积分(R1):可用用于兑换,累计是荣誉 -->
+      <view class="points-row">
+        <view class="points-main">
+          <view class="points-label">可用积分</view>
+          <view class="points-value num">{{availablePoints}}</view>
+          <view class="points-hint">可以用来兑换奖励</view>
+        </view>
+        <view class="points-side">
+          <view class="points-side-label">累计总积分</view>
+          <view class="points-side-value num">{{lifetimePoints}}</view>
+          <view class="points-hint">只增不减的成长荣誉</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 今日得分 -->
+      <view class="today-row">
+        <view class="today-item">
+          <view class="today-num num b-text">+{{bonusTotal}}</view>
+          <view class="today-label">今日加分</view>
+        </view>
+        <block wx:if="{{isParent}}">
+          <view class="today-item">
+            <view class="today-num num p-text">-{{penaltyTotal}}</view>
+            <view class="today-label">今日扣分</view>
+          </view>
+        </block>
+        <view class="today-item">
+          <view class="today-num num {{netPoints >= 0 ? 'ok-text' : 'p-text'}}">
+            {{netPoints >= 0 ? '+' : ''}}{{netPoints}}
+          </view>
+          <view class="today-label">今日净得</view>
+        </view>
+        <view class="today-item">
+          <view class="today-num num">{{streak.current}}</view>
+          <view class="today-label">连续打卡</view>
+        </view>
+      </view>
+
+      <!-- 连续打卡说明 -->
+      <view wx:if="{{streakNote}}" class="streak-note">{{streakNote}}</view>
+
+      <!-- 单日扣分上限进度(仅家长) -->
+      <view wx:if="{{isParent}}" class="limit-box">
+        <view class="limit-head">
+          <text>今日扣分额度</text>
+          <text class="num {{penaltyRemain === 0 ? 'p-text' : 'muted'}}">
+            还剩 {{penaltyRemain}} / {{penaltyLimit}} 分
+          </text>
+        </view>
+        <view class="limit-track">
+          <view class="limit-fill" style="width:{{penaltyPercent}}%;"></view>
+        </view>
+      </view>
+
+      <!-- 三大按钮 -->
+      <view class="hero-actions">
+        <view class="hero-btn hero-btn-b" bindtap="onOpenAdjust" data-kind="bonus">
+          <text class="hero-btn-icon">＋</text>
+          <text>加分</text>
+        </view>
+        <view class="hero-btn hero-btn-p" bindtap="onOpenAdjust" data-kind="penalty">
+          <text class="hero-btn-icon">－</text>
+          <text>扣分</text>
+        </view>
+        <view class="hero-btn hero-btn-s" bindtap="goStats">
+          <text class="hero-btn-icon">📊</text>
+          <text>统计</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ---------- 日期横排 ---------- -->
+    <view class="datestrip">
+      <view class="datestrip-head">
+        <view class="datestrip-title">{{dateText}}</view>
+        <view wx:if="{{date !== dateStrip[3].key}}" class="back-today" bindtap="onBackToday">回到今天</view>
+      </view>
+      <view class="datestrip-list">
+        <view class="date-arrow" bindtap="onPrevDay">‹</view>
+        <view
+          wx:for="{{dateStrip}}"
+          wx:key="key"
+          class="date-cell {{item.isCenter ? 'date-cell-active' : ''}} {{item.isToday ? 'date-cell-today' : ''}} {{item.isWeekend ? 'date-cell-weekend' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onPickDate"
+        >
+          <view class="date-week">{{item.weekday}}</view>
+          <view class="date-day num">{{item.day}}</view>
+          <view wx:if="{{item.isToday}}" class="date-dot"></view>
+        </view>
+        <view class="date-arrow {{date === dateStrip[6].key ? 'date-arrow-off' : ''}}" bindtap="onNextDay">›</view>
+      </view>
+    </view>
+
+    <!-- ---------- 中部:今日成长打卡 · 加分栏 ---------- -->
+    <view class="section-title">
+      <text>今日好习惯加分</text>
+      <text class="more" bindtap="goRules">管理规则 ›</text>
+    </view>
+
+    <view class="card card-tight">
+      <block wx:if="{{bonusTasks.length}}">
+        <view
+          wx:for="{{bonusVisible}}"
+          wx:key="_id"
+          class="task-item {{item.done ? 'task-done' : ''}}"
+          data-id="{{item._id}}"
+          data-kind="bonus"
+          bindtap="onToggleTask"
+        >
+          <view class="task-check {{item.done ? 'check-b' : ''}}">
+            <text wx:if="{{item.done}}">✓</text>
+          </view>
+          <view class="task-main">
+            <view class="task-name">{{item.name}}</view>
+            <view class="task-meta">
+              <text class="tag">{{item.categoryLabel}}</text>
+            </view>
+          </view>
+          <view class="task-score num b-text">+{{item.score}}</view>
+        </view>
+
+        <view wx:if="{{bonusTasks.length > 6 && !bonusExpanded}}" class="expand-btn" data-kind="bonus" bindtap="onToggleExpand">
+          展开其余 {{bonusTasks.length - 6}} 项 ⌄
+        </view>
+        <view wx:if="{{bonusExpanded && bonusTasks.length > 6}}" class="expand-btn" data-kind="bonus" bindtap="onToggleExpand">
+          收起 ⌃
+        </view>
+      </block>
+      <view wx:else class="empty">
+        <view class="empty-icon">🌿</view>
+        <view>还没有加分项</view>
+        <view class="empty-tip">去行为规则库添加几条吧</view>
+      </view>
+    </view>
+
+    <!-- ---------- 扣分栏(仅家长模式可见) ---------- -->
+    <block wx:if="{{isParent}}">
+      <view class="section-title">
+        <text>今日不良行为扣分</text>
+        <text class="more">温和提醒,不打击</text>
+      </view>
+
+      <view class="card card-tight">
+        <block wx:if="{{penaltyTasks.length}}">
+          <view
+            wx:for="{{penaltyVisible}}"
+            wx:key="_id"
+            class="task-item {{item.done ? 'task-done' : ''}}"
+            data-id="{{item._id}}"
+            data-kind="penalty"
+            bindtap="onToggleTask"
+          >
+            <view class="task-check {{item.done ? 'check-p' : ''}}">
+              <text wx:if="{{item.done}}">✓</text>
+            </view>
+            <view class="task-main">
+              <view class="task-name">{{item.name}}</view>
+              <view class="task-meta">
+                <text class="tag">{{item.categoryLabel}}</text>
+              </view>
+            </view>
+            <view class="task-score num p-text">{{item.score}}</view>
+          </view>
+
+          <view wx:if="{{penaltyTasks.length > 6 && !penaltyExpanded}}" class="expand-btn" data-kind="penalty" bindtap="onToggleExpand">
+            展开其余 {{penaltyTasks.length - 6}} 项 ⌄
+          </view>
+          <view wx:if="{{penaltyExpanded && penaltyTasks.length > 6}}" class="expand-btn" data-kind="penalty" bindtap="onToggleExpand">
+            收起 ⌃
+          </view>
+
+          <!-- 犯错补救:原型稿核心独创机制 -->
+          <view class="makeup-entry" bindtap="onOpenMakeup">
+            <text class="makeup-icon">🌱</text>
+            <view class="makeup-text">
+              <view class="makeup-title">犯错补救</view>
+              <view class="makeup-sub">勾了扣分?可以让他用行动赚回来</view>
+            </view>
+            <text class="makeup-arrow">›</text>
+          </view>
+        </block>
+        <view wx:else class="empty">还没有扣分项</view>
+      </view>
+    </block>
+
+    <!-- 孩子模式下的一句安抚(替代扣分栏的位置) -->
+    <view wx:else class="card child-cheer">
+      <text class="cheer-icon">🌞</text>
+      <view class="cheer-text">今天也在认真打卡,继续加油</view>
+    </view>
+
+    <!-- ---------- 勋章入口 ---------- -->
+    <view class="card card-tight medal-entry" bindtap="goMedal">
+      <view class="row-left">
+        <text class="medal-entry-icon">🏅</text>
+        <view>
+          <view class="strong">我的勋章</view>
+          <view class="card-sub">已获得 {{medalUnlocked}} / {{medalTotal}} 枚</view>
+        </view>
+      </view>
+      <text class="makeup-arrow">›</text>
+    </view>
+
+    <!-- ---------- 最近成长日志 ---------- -->
+    <view class="section-title">
+      <text>最近的记录</text>
+      <text class="more" bindtap="goLog">全部 ›</text>
+    </view>
+    <view class="card card-tight">
+      <block wx:if="{{recentLogs.length}}">
+        <view wx:for="{{recentLogs}}" wx:key="_id" class="log-line">
+          <view class="row">
+            <text class="log-date">{{item.date}}</text>
+            <text class="num {{item.netPoints >= 0 ? 'b-text' : 'p-text'}}">
+              {{item.netPoints >= 0 ? '+' : ''}}{{item.netPoints}}
+            </text>
+          </view>
+          <view class="log-text">{{item.text}}</view>
+        </view>
+      </block>
+      <view wx:else class="empty">
+        <view>还没有成长记录</view>
+        <view class="empty-tip">晚上花一分钟,记下今天的小事</view>
+      </view>
+      <view class="log-add" bindtap="onOpenLog">＋ 添加今日备注</view>
+    </view>
+
+    <!-- ---------- 底部核心按钮 ---------- -->
+    <view class="btn-row">
+      <button class="btn-big btn-soft-bg" bindtap="onOpenLog">今日备注</button>
+      <button class="btn-big btn-primary-bg" bindtap="goReward">去兑换奖励</button>
+    </view>
+
+    <view class="footer-space"></view>
+  </block>
+
+  <!-- ============ 手动加/扣分弹层 ============ -->
+  <view wx:if="{{adjustVisible}}" class="mask" bindtap="onCloseAdjust">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">{{adjustKind === 'bonus' ? '手动加分' : '手动扣分'}}</view>
+      <view class="sheet-sub">
+        {{adjustKind === 'bonus' ? '做得好,给个鼓励' : '别超过今天的扣分上限'}}
+      </view>
+
+      <view class="adjust-input-row">
+        <input
+          class="adjust-input num"
+          type="number"
+          value="{{adjustValue}}"
+          placeholder="0"
+          maxlength="3"
+          bindinput="onAdjustInput"
+        />
+        <text class="adjust-unit">分</text>
+      </view>
+
+      <view class="quick-row">
+        <view class="quick-chip" data-v="1" bindtap="onAdjustQuick">1</view>
+        <view class="quick-chip" data-v="2" bindtap="onAdjustQuick">2</view>
+        <view class="quick-chip" data-v="3" bindtap="onAdjustQuick">3</view>
+        <view class="quick-chip" data-v="5" bindtap="onAdjustQuick">5</view>
+        <view class="quick-chip" data-v="10" bindtap="onAdjustQuick">10</view>
+      </view>
+
+      <input
+        class="adjust-note"
+        value="{{adjustNote}}"
+        placeholder="写点什么(可选)"
+        maxlength="30"
+        bindinput="onAdjustNoteInput"
+      />
+
+      <view class="btn-row" style="margin:24rpx 0 0;">
+        <button class="btn-big btn-ghost-bg" bindtap="onCloseAdjust">取消</button>
+        <button class="btn-big {{adjustKind === 'bonus' ? 'btn-primary-bg' : 'btn-danger-bg'}}" bindtap="onSubmitAdjust">
+          确定
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 补救弹层 ============ -->
+  <view wx:if="{{makeupVisible}}" class="mask" bindtap="onCloseMakeup">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">犯错补救</view>
+      <view class="sheet-sub">让他用行动把分赚回来 —— 学会负责,而不是被惩罚</view>
+      <view
+        wx:for="{{makeupList}}"
+        wx:key="name"
+        class="makeup-item"
+        data-idx="{{index}}"
+        bindtap="onPickMakeup"
+      >
+        <view class="row-left">
+          <text class="makeup-item-icon">🌱</text>
+          <text>{{item.name}}</text>
+        </view>
+        <text class="num b-text">+{{item.score}}</text>
+      </view>
+      <button class="btn-big btn-ghost-bg mt-24" bindtap="onCloseMakeup">先不用</button>
+    </view>
+  </view>
+
+  <!-- ============ 今日备注弹层 ============ -->
+  <view wx:if="{{logVisible}}" class="mask" bindtap="onCloseLog">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">今日备注</view>
+      <view class="sheet-sub">老师表扬、小小的进步、今天的小情绪,都值得记一笔</view>
+      <textarea
+        class="log-input"
+        value="{{logText}}"
+        placeholder="今天他…"
+        maxlength="300"
+        bindinput="onLogInput"
+        auto-height
+      />
+      <view class="btn-row" style="margin:24rpx 0 0;">
+        <button class="btn-big btn-ghost-bg" bindtap="onCloseLog">取消</button>
+        <button class="btn-big btn-primary-bg" bindtap="onSubmitLog">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 勋章解锁提示 ============ -->
+  <view wx:if="{{medalToast}}" class="medal-toast">
+    <text class="medal-toast-icon">{{medalToast.icon}}</text>
+    <view>
+      <view class="medal-toast-title">解锁新勋章</view>
+      <view class="medal-toast-name">{{medalToast.name}}</view>
+    </view>
+  </view>
+
+</view>

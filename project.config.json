@@ -1,0 +1,57 @@
+{
+  "description": "项目级配置(唯一入口)。开发者工具打开【本目录】(child-points)这一层即可同时编译小程序与上传云函数。",
+  "miniprogramRoot": "src/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "appid": "wx2938ccdd9266f246",
+  "projectname": "宝贝成长积分打卡",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": false,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "compileWorklet": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false
+  },
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "tests",
+        "type": "folder"
+      },
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "functions",
+        "type": "folder"
+      },
+      {
+        "value": ".cache",
+        "type": "folder"
+      },
+      {
+        "value": ".md",
+        "type": "suffix"
+      }
+    ],
+    "include": []
+  },
+  "editorSetting": {},
+  "simulatorPluginLibVersion": {}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "rewardList",
+  "version": "1.0.0",
+  "description": "奖励商城列表 + 兑换记录,按可用积分计算可兑换性",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

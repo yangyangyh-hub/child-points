@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "成长日志",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 80,
+  "backgroundTextStyle": "light",
+  "usingComponents": {}
+}

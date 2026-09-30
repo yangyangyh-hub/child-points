@@ -1,0 +1,119 @@
+/* 家长密码页样式
+
+   设计要点:
+     1) 数字键做大(键高 120rpx),密码场景最容易误触
+     2) 点阵用实心圆,不用 ●\○ 字符 —— 字符在不同机型基线不齐
+     3) 锁定态用暖橙提示,不用红色警告 —— 家长是使用者不是攻击者 */
+
+.pin-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 90rpx;
+  box-sizing: border-box;
+}
+
+.pin-top { text-align: center; padding: 0 60rpx; }
+
+.pin-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--cp-text);
+}
+
+.pin-sub {
+  font-size: 26rpx;
+  color: var(--cp-text-sub);
+  margin-top: 14rpx;
+  line-height: 1.5;
+}
+
+/* ============ 点阵 ============ */
+
+.pin-dots {
+  display: flex;
+  gap: 40rpx;
+  margin: 70rpx 0 24rpx;
+}
+
+.pin-dot {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 16rpx;
+  background: #E4EBF3;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.pin-dot-on {
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  transform: scale(1.08);
+}
+
+/* ============ 提示区 ============ */
+
+/* 固定高度 —— 否则提示出现/消失会让键盘上下跳,点错一次键位就飘了 */
+.pin-msg {
+  height: 80rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--cp-penalty);
+  line-height: 1.5;
+}
+
+.pin-msg-lock { color: var(--cp-warn-deep); }
+
+.pin-countdown {
+  font-size: 24rpx;
+  color: var(--cp-text-sub);
+}
+
+/* ============ 键盘 ============ */
+
+.pin-pad {
+  display: flex;
+  flex-wrap: wrap;
+  width: 600rpx;
+  gap: 20rpx;
+}
+
+.pin-key {
+  width: 186rpx;
+  height: 120rpx;
+  border-radius: 28rpx;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(122, 184, 245, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+/* 按下态:小程序没有 :active 的可靠替代,用 hover-class 更稳,
+   但 hover-class 这里不写也够用(键盘本身反馈已足够) */
+
+.pin-key-fn {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--cp-text-sub);
+  background: var(--cp-surface);
+  box-shadow: none;
+}
+
+/* ============ 底部 ============ */
+
+.pin-cancel {
+  margin-top: 56rpx;
+  font-size: 30rpx;
+  color: var(--cp-text-sub);
+  padding: 20rpx 60rpx;
+}
+
+.pin-tip {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}

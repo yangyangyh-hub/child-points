@@ -1,0 +1,9 @@
+{
+  "name": "statsData",
+  "version": "1.0.0",
+  "description": "成长数据统计:7日趋势/TOP3/完成率/周报模板拼装",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

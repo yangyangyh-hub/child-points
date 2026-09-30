@@ -1,0 +1,198 @@
+/* 成长日志样式
+
+   设计要点:
+     1) 时间轴用 CSS 画(圆点 + 竖线),不用图片 —— 省包体
+     2) 「当天净得分」刻意弱化(小字号),日志的主角是文字不是分数
+        —— 否则家长会不自觉地把日志当成绩单看
+     3) 最后一条不画竖线(靠 :last-child 用不到,小程序支持有限,
+        改用 wx:for 的 index 判断写在 wxml 里) */
+
+.page { padding-top: 24rpx; }
+
+/* ============ 快捷入口 ============ */
+
+.quick-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--cp-primary-soft) 0%, #DCEBFC 100%);
+  box-shadow: 0 6rpx 26rpx rgba(255, 122, 89, 0.14);
+}
+
+.quick-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #24548F;
+}
+
+.quick-sub {
+  font-size: 23rpx;
+  color: #7A93AE;
+  margin-top: 6rpx;
+}
+
+.quick-btn {
+  min-width: 160rpx;
+  height: 76rpx;
+  border-radius: 38rpx;
+  background: linear-gradient(135deg, var(--cp-primary-light) 0%, var(--cp-primary) 100%);
+  color: #FFFFFF;
+  font-size: 29rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 20rpx;
+}
+
+/* ============ 时间轴 ============ */
+
+.timeline-card { padding: 20rpx 26rpx; }
+
+.log-item {
+  display: flex;
+  align-items: stretch;
+  min-height: 130rpx;
+}
+
+.log-date {
+  width: 118rpx;
+  flex-shrink: 0;
+  padding-top: 4rpx;
+}
+
+.log-date-main {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--cp-text);
+}
+
+.log-date-sub {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 4rpx;
+}
+
+/* 轴:圆点定位在顶部,竖线撑满这一条的高度 */
+.log-axis {
+  width: 40rpx;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.log-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 10rpx;
+  background: #B9D8FD;
+  border: 4rpx solid var(--cp-primary-soft);
+  margin-top: 8rpx;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.log-line {
+  flex: 1;
+  width: 2rpx;
+  background: var(--cp-line);
+  margin-top: -4rpx;
+}
+
+/* 最后一条不画线,避免尾巴悬空 */
+.log-item:last-child .log-line { background: transparent; }
+
+.log-body {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0 26rpx 16rpx;
+}
+
+.log-text {
+  font-size: 29rpx;
+  color: #3D4A5A;
+  line-height: 1.65;
+  word-break: break-all;
+}
+
+.log-net {
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 10rpx;
+}
+
+.log-net .num { font-weight: 600; }
+
+/* ============ 加载更多 ============ */
+
+.load-more {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--cp-text-hint);
+  padding: 20rpx 0 10rpx;
+}
+
+/* ============ 编辑弹层 ============ */
+
+.editor-date {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 84rpx;
+  background: var(--cp-bg);
+  border-radius: 20rpx;
+  padding: 0 26rpx;
+  font-size: 28rpx;
+  color: var(--cp-text);
+  margin-bottom: 22rpx;
+}
+
+.editor-date-change {
+  font-size: 24rpx;
+  color: var(--cp-primary);
+}
+
+.editor-area {
+  width: 100%;
+  min-height: 220rpx;
+  max-height: 520rpx;
+  background: var(--cp-bg);
+  border-radius: 20rpx;
+  padding: 24rpx 26rpx;
+  font-size: 29rpx;
+  color: var(--cp-text);
+  line-height: 1.7;
+  box-sizing: border-box;
+}
+
+.editor-ph { color: var(--cp-text-hint); }
+
+.editor-count {
+  text-align: right;
+  font-size: 22rpx;
+  color: var(--cp-text-hint);
+  margin-top: 12rpx;
+}
+
+.editor-actions {
+  margin: 20rpx 0 0;
+  gap: 16rpx;
+}
+
+/* ============ 日期选择 ============ */
+
+.picker-display {
+  height: 96rpx;
+  background: var(--cp-bg);
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--cp-primary);
+  font-variant-numeric: tabular-nums;
+}

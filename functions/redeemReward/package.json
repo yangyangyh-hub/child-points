@@ -1,0 +1,9 @@
+{
+  "name": "redeemReward",
+  "version": "1.0.0",
+  "description": "兑换奖励:提交申请 → 家长审批 → 扣可用积分(两步式)",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
